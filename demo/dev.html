@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+        <xtal-decor import-template into-next-element>
+            <template>
+                <style>
+                    .ui5-tc__headerItemText{
+                        color: red;
+                    }
+                </style>
+            </template>
+        </xtal-decor>
+        <ui5-tabcontainer class="full-width" show-overflow>
+                <ui5-tab text="Tab 1">
+                    <ui5-label>Quibusdam, veniam! Architecto debitis iusto ad et, asperiores quisquam perferendis reprehenderit ipsa voluptate minus minima, perspiciatis cum. Totam harum necessitatibus numquam voluptatum.</ui5-label>
+                </ui5-tab>
+                <ui5-tab icon="sap-icon://activities" text="Tab 2" selected>
+                    <ui5-label>Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga magni facere error dicta beatae optio repudiandae vero, quidem voluptatibus perferendis eum maiores rem tempore voluptates aperiam eos enim delectus unde.</ui5-label>
+                </ui5-tab>
+                <ui5-tab icon="sap-icon://add" text="Tab 3">
+                    <ui5-label>Dignissimos debitis architecto temporibus doloribus reiciendis libero rem nemo, nobis quidem dolor praesentium, beatae voluptatum iste eveniet, nam voluptatem obcaecati ducimus dolore.</ui5-label>
+                </ui5-tab>
+                <ui5-tab icon="sap-icon://calendar" text="Tab 4">
+                    <ui5-label>Possimus ipsa eos impedit aut nisi repellendus recusandae, temporibus ducimus, necessitatibus tenetur facere, minima vero fugit rem reiciendis natus ratione quia numquam?</ui5-label>
+                </ui5-tab>
+                <ui5-tab-separator></ui5-tab-separator>
+                <ui5-tab icon="sap-icon://action-settings" text="Tab 5">
+                    <ui5-label>Explicabo laboriosam ab consequuntur, qui dignissimos inventore sapiente ullam quaerat ratione libero vero, beatae laudantium! Aperiam numquam tempore, laudantium perferendis recusandae autem.</ui5-label>
+                </ui5-tab>
+            </ui5-tabcontainer>
+    <script type="module"
+    src="https://storage.googleapis.com/pika-web-packages-02/ui5-buffet/0.0.0/dist-es2019/ui5-buffet.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/es-module-shims@0.2.7/dist/es-module-shims.js"></script>
+    <script type="importmap-shim">
+    {
+        "imports": {
+            "xtal-element/": "../node_modules/xtal-element/",
+            "trans-render/": "../node_modules/trans-render/",
+            "xtal-deco/": "../node_modules/xtal-deco/",
+            "xtal-shell/": "../node_modules/xtal-shell/"
+        }
+    }
+    </script>
+    <script type="module-shim">
+        import '../xtal-decor.js';
+    </script>
+</body>
+</html>
