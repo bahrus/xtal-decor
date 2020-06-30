@@ -1,101 +1,54 @@
 import { XtalDeco } from 'xtal-deco/xtal-deco.js';
-import { define } from 'trans-render/define.js';
-
+import { define, AttributeProps, mergeProps } from 'xtal-element/xtal-latx.js';
 import { cd } from 'xtal-shell/cd.js';
 
-
-//const where_css_matches = 'where-css-matches';
-const into_next_element = 'into-next-element';
-const import_template = 'import-template';
-const attach_script = 'attach-script';
-
-
+const onDisabled = ({disabled, self}: XtalDecor) =>{
+    if(disabled) return;
+    self.addMutationObserver();
+}
+const onIntoNextElement = ({intoNextElement, self}: XtalDecor) =>{
+    if(!intoNextElement || self.nextSiblingTarget) return;
+    self.getElement('nextSiblingTarget', t => (t.nextElementSibling as HTMLElement));
+}
+const onNextElementSibling = ({nextSiblingTarget, self}: XtalDecor) => {
+    self.do();
+}
 /**
- * `xtal-decor`
  * Attach / override behavior in next element.  Insert template elements
- * @attribute: into-next-element:  boolean -- Modify behavior of next element.
- * @attribute: import-template: boolean -- Indicates there's at least one template to insert.
- * @attribute: attach-script: boolean -- Indicates there's script to attach.
+ * @element xtal-decor
  */
 export class XtalDecor extends XtalDeco {
     static _addedNodeInsertionStyle = false;
 
-    static get is() { return 'xtal-decor'; }
+    static is = 'xtal-decor';
 
+    static attributeProps = ({intoNextElement, importTemplate, }: XtalDecor) => {
+        const ap = {
+            bool:[intoNextElement, importTemplate]
+        } as AttributeProps;
+        return mergeProps(ap, XtalDeco.props);
+    };
 
-
-    _intoNextElement: boolean;
     /**
      * Modify behavior of next element.
      */
-    get intoNextElement() {
-        return this._intoNextElement;
-    }
-    set intoNextElement(val) {
-        this.attr(into_next_element, val, '');
-    }
+    intoNextElement: boolean | undefined;
 
-    _importTemplate: boolean;
     /**
      * Indicates there's at least one template to insert.
      */
-    get importTemplate() {
-        return this._importTemplate;
-    }
-    set importTemplate(val) {
-        this.attr(import_template, val, '');
-    }
+    importTemplate: boolean | undefined;
 
-    _attachScript: boolean;
-    /**
-     * Indicates there's script to attach.
-     */
-    get attachScript() {
-        return this._attachScript;
-    }
-    set attachScript(val) {
-        this.attr(attach_script, val, '');
-    }
+    propActions = [
+        onDisabled,
+        onIntoNextElement,
+        onNextElementSibling,
+    ];
 
-    static get observedAttributes() {
-        return super.observedAttributes.concat([
-            /**
-            * Indicates there's at least one template to insert.
-            */
-            into_next_element,
-            import_template,
-            attach_script
-        ]);
-    }
 
-    attributeChangedCallback(name: string, oldVal: string, newVal: string) {
-        super.attributeChangedCallback(name, oldVal, newVal);
-        switch (name) {
-            case import_template:
-                this._importTemplate = newVal !== null;
-                break;
-            case attach_script:
-                this._attachScript = newVal !== null;
-                break;
-            case into_next_element:
-                this._intoNextElement = (newVal !== null);
-                break;
-
-        }
-        this.onDecoPropsChange();
-    }
-
-    _connected: boolean;
     _mutationObserver: MutationObserver;
-    connectedCallback() {
-        this.propUp(['disabled', 'attachScript', 'importTemplate', 'intoNextElement', 'whereCSSMatches']);
-        this._connected = true;
-        this.onDecoPropsChange();
-        this.addMutationObserver();
-    }
-    disconnectedCallback() {
-        if (this._mutationObserver) this._mutationObserver.disconnect();
-    }
+
+
     do(){
         this.appendTemplates();
         this.attachScripts();
@@ -117,31 +70,19 @@ export class XtalDecor extends XtalDeco {
     }
     _templates: HTMLTemplateElement[];
     _scripts: HTMLScriptElement[];
-    onDecoPropsChange() {
-        if (!this._connected || this.disabled) return;
-        if (this._intoNextElement && !this._nextSibling) {
-            this.getElement('_nextSibling', t => (t.nextElementSibling as HTMLElement));
-            return;
-        }
-        this.addMutationObserver();
 
-        //if (this._attachScript && this._intoNextElement) this.attachScripts();
-    }
 
     appendTemplates(target?: HTMLElement) {
         if (!this._templates) return;
-        if (!target && this._intoNextElement) target = this._nextSibling;
-        if (this._importTemplate && target) {
+        if (!target && this.intoNextElement) target = this.nextSiblingTarget;
+        if (this.importTemplate && target) {
             customElements.whenDefined(target.tagName.toLowerCase()).then(() => {
-                //const target = this._nextSibling;
                 this._templates.forEach((template: HTMLTemplateElement) => {
                     if (template.dataset.xtalTemplInserted) return;
                     let subTarget = target;
                     const path = template.dataset.path;
                     if (path) {
                         subTarget = cd(target, path);
-                        // $hell.$0 = target;
-                        // subTarget = $hell.cd(path);
                     }
                     const clone = document.importNode(template.content, true) as HTMLDocument;
                     subTarget.shadowRoot.appendChild(clone);
@@ -165,8 +106,8 @@ export class XtalDecor extends XtalDeco {
     }
     attachScripts(target?: HTMLElement) {
         if (!this._scripts) return;
-        if (!target && this._intoNextElement) target = this._nextSibling;
-        if (this._attachScript && target) {
+        if (!target && this.intoNextElement) target = this.nextSiblingTarget;
+        if (this.attachScript && target) {
             const ln = target.localName;
             if(ln.indexOf('-') > -1){
                 customElements.whenDefined(target.tagName.toLowerCase()).then(() => {
@@ -179,6 +120,9 @@ export class XtalDecor extends XtalDeco {
             }
             
         }
+    }
+    disconnectedCallback() {
+        if (this._mutationObserver) this._mutationObserver.disconnect();
     }
 }
 define(XtalDecor);

@@ -13,13 +13,13 @@
     "url": "git+https://github.com/bahrus/xtal-decor.git"
   },
   "dependencies": {
-    "trans-render": "0.0.143",
-    "xtal-element": "0.0.101",
-    "xtal-deco": "0.0.6",
+    "trans-render": "0.0.209",
+    "xtal-element": "0.0.220",
+    "xtal-deco": "0.0.10",
     "xtal-shell": "0.0.25"
   },
   "devDependencies": {
-    "xtal-test": "0.0.44"
+    "xtal-test": "0.0.46"
   },
   "author": "anderson.bruce.b@gmail.com",
   "license": "MIT",
