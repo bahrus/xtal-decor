@@ -1,18 +1,40 @@
-import { XtalDeco } from 'xtal-deco/xtal-deco.js';
+import { XtalDeco, linkNextSiblingTarget } from 'xtal-deco/xtal-deco.js';
 import { define, AttributeProps, mergeProps } from 'xtal-element/xtal-latx.js';
 import { cd } from 'xtal-shell/cd.js';
 
-const onDisabled = ({disabled, self}: XtalDecor) =>{
-    if(disabled) return;
-    self.addMutationObserver();
+export const linkNextSiblingTargetExt = ({self, intoNextElement}: XtalDecor) => {
+    if(!intoNextElement) return;
+    linkNextSiblingTarget(self);
 }
-const onIntoNextElement = ({intoNextElement, self}: XtalDecor) =>{
-    if(!intoNextElement || self.nextSiblingTarget) return;
-    self.getElement('nextSiblingTarget', t => (t.nextElementSibling as HTMLElement));
+
+export const linkScriptsAndTemplates = ({self, mutationCount}: XtalDecor) => {
+    self._templates = Array.from(self.querySelectorAll('template')) as HTMLTemplateElement[];
+    self._scripts = Array.from(self.querySelectorAll('script')) as HTMLScriptElement[];
+    // self.attachScripts();
 }
-const onNextElementSibling = ({nextSiblingTarget, self}: XtalDecor) => {
-    self.do();
+
+export const appendTemplatesInNextSiblingTarget = ({self, _templates, importTemplates, intoNextElement, nextSiblingTarget}: XtalDecor) => {
+    if(!_templates || !importTemplates || !intoNextElement || !nextSiblingTarget) return;
+    const  target = nextSiblingTarget;
+    customElements.whenDefined(target.tagName.toLowerCase()).then(() => {
+        _templates.forEach((template: HTMLTemplateElement) => {
+            if (template.dataset.xtalTemplInserted) return;
+            let subTarget = target;
+            const path = template.dataset.path;
+            if (path) {
+                subTarget = cd(target, path);
+            }
+            const clone = document.importNode(template.content, true) as HTMLDocument;
+            subTarget.shadowRoot.appendChild(clone);
+            template.dataset.xtalTemplInserted = 'true';
+        })
+
+    });
 }
+export const attachScripts=({}: XtalDecor) => {
+
+}
+
 /**
  * Attach / override behavior in next element.  Insert template elements
  * @element xtal-decor
@@ -22,9 +44,11 @@ export class XtalDecor extends XtalDeco {
 
     static is = 'xtal-decor';
 
-    static attributeProps = ({intoNextElement, importTemplate, }: XtalDecor) => {
+    static attributeProps = ({intoNextElement, importTemplates, mutationCount, _templates, _scripts}: XtalDecor) => {
         const ap = {
-            bool:[intoNextElement, importTemplate]
+            bool:[intoNextElement, importTemplates],
+            num:[mutationCount],
+            obj:[_templates, _scripts]
         } as AttributeProps;
         return mergeProps(ap, XtalDeco.props);
     };
@@ -34,65 +58,33 @@ export class XtalDecor extends XtalDeco {
      */
     intoNextElement: boolean | undefined;
 
+    mutationCount: number;
+
     /**
      * Indicates there's at least one template to insert.
      */
-    importTemplate: boolean | undefined;
+    importTemplates: boolean | undefined;
 
     propActions = [
-        onDisabled,
-        onIntoNextElement,
-        onNextElementSibling,
+        linkNextSiblingTargetExt,
+        linkScriptsAndTemplates,
+        appendTemplatesInNextSiblingTarget
     ];
 
 
     _mutationObserver: MutationObserver;
-
-
-    do(){
-        this.appendTemplates();
-        this.attachScripts();
-    }
-    addMutationObserver() {
-        this._mutationObserver = new MutationObserver((mutationsList: MutationRecord[]) => {
-            this.getTemplatesAndScripts();
-            this.do();
-            
-        });
-        this.getTemplatesAndScripts();
-        this.do();
-        this._mutationObserver.observe((<any>this as Node), { childList: true });
-
-    }
-    getTemplatesAndScripts() {
-        this._templates = Array.from(this.querySelectorAll('template')) as HTMLTemplateElement[];
-        this._scripts = Array.from(this.querySelectorAll('script')) as HTMLScriptElement[];
-    }
     _templates: HTMLTemplateElement[];
     _scripts: HTMLScriptElement[];
 
 
-    appendTemplates(target?: HTMLElement) {
-        if (!this._templates) return;
-        if (!target && this.intoNextElement) target = this.nextSiblingTarget;
-        if (this.importTemplate && target) {
-            customElements.whenDefined(target.tagName.toLowerCase()).then(() => {
-                this._templates.forEach((template: HTMLTemplateElement) => {
-                    if (template.dataset.xtalTemplInserted) return;
-                    let subTarget = target;
-                    const path = template.dataset.path;
-                    if (path) {
-                        subTarget = cd(target, path);
-                    }
-                    const clone = document.importNode(template.content, true) as HTMLDocument;
-                    subTarget.shadowRoot.appendChild(clone);
-                    template.dataset.xtalTemplInserted = 'true';
-                })
-
-            })
-        }
+    addMutationObserver() {
+        this._mutationObserver = new MutationObserver((mutationsList: MutationRecord[]) => {
+            this.mutationCount++;
+        });
+        this._mutationObserver.observe((<any>this as Node), { childList: true });
 
     }
+
     doScripts(target: HTMLElement){
         this._scripts.forEach((script: HTMLScriptElement) => {
             if (script.dataset.xtalScriptAttached) return;
@@ -101,9 +93,10 @@ export class XtalDecor extends XtalDeco {
             if (path) {
                 subTarget = cd(target, path);
             }
-            this.evaluateCode(script);
+            
         })
     }
+
     attachScripts(target?: HTMLElement) {
         if (!this._scripts) return;
         if (!target && this.intoNextElement) target = this.nextSiblingTarget;
@@ -120,6 +113,12 @@ export class XtalDecor extends XtalDeco {
             }
             
         }
+    }
+
+    connectedCallback(){
+        super.connectedCallback();
+        this.addMutationObserver();
+        this.mutationCount = 0;
     }
     disconnectedCallback() {
         if (this._mutationObserver) this._mutationObserver.disconnect();
