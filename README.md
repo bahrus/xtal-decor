@@ -7,7 +7,7 @@ Declarative
 <xtal-decor-foo treat=bebe-rexha as-a=bitch></xtal-decor-foo> <!-- doesn't do anything -->
 <xtal-decor-bar treat=meredith-brooks as-a=saint></xtal-decor-bar>
 <xtal-decor-baz treat=* as-a=mess></xtal-decor-baz> <!-- only applies to bebe-rexha -->
-<xtal-decor-quz upgrade=blacked-eyed-peas as=on-the-next-level></xtal-docor-quz>
+<xtal-decor-quz upgrade=blacked-eyed-peas to-be=on-the-next-level></xtal-docor-quz>
 ...
 
 <meredith-brooks 
