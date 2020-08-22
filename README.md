@@ -25,8 +25,8 @@ Declarative
     is-a-mess 
     is-a-loser 
     is-a-hater 
-    is-a-user>
-</bebe-rexha>
+    is-a-user
+></bebe-rexha>
 
 <black-eyed-peas 
     imma-be-on-the-next-level 
@@ -44,14 +44,14 @@ Declarative
 
 API
 ```JavaScript
-XtalDecor.treat({
-    elementInScope: ... //Apply trait to all elements within the same ShadowDOM realm as elementInScope.  If not provided, applies outside any ShadowDOM.
+decorate({
+    shadowRoot: ... //Apply trait to all elements within the specified ShadowDOM realm.  If not provided, applies outside any ShadowDOM.
     treat: ... //CSS query to monitor for matching elements within ShadowDOM Realm.
     asA: ...// monitor for attributes start with is-a-[asA.toLispCase()], 
     proxyHandler: 
 });
-XtalDecor.upgrade({
-    elementInScope: ... //Apply trait to all elements within the same ShadowDOM realm as elementInScope.  If not provided, applies outside any ShadowDOM.
+upgrade({
+    shadowRoot: ... //Apply trait to all elements within the same ShadowDOM realm as elementInScope.  If not provided, applies outside any ShadowDOM.
     toBe: // monitor for attributes start with imma-be-[asA.toLispCase()], 
     proxyHandler: 
 });
