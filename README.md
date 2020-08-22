@@ -2,6 +2,8 @@
 
 ## Syntax
 
+
+
 Declarative
 ```html
 <xtal-decor-foo treat=bebe-rexha as-a=bitch></xtal-decor-foo> <!-- doesn't do anything -->
@@ -38,4 +40,19 @@ Declarative
     is-rocking-over-that-bass-tremble
     is-chilling-with-my-motherfuckin-crew
 ></black-eyed-peas>
+```
+
+API
+```JavaScript
+XtalDecor.treat({
+    elementInScope: ... //Apply trait to all elements within the same ShadowDOM realm as elementInScope.  If not provided, applies outside any ShadowDOM.
+    treat: ... //CSS query to monitor for matching elements within ShadowDOM Realm.
+    asA: ...// monitor for attributes start with is-a-[asA.toLispCase()], 
+    proxyHandler: 
+});
+XtalDecor.upgrade({
+    elementInScope: ... //Apply trait to all elements within the same ShadowDOM realm as elementInScope.  If not provided, applies outside any ShadowDOM.
+    toBe: // monitor for attributes start with imma-be-[asA.toLispCase()], 
+    proxyHandler: 
+});
 ```
