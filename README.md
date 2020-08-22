@@ -4,9 +4,9 @@
 
 Declarative
 ```html
-<xtal-decor-bitch></xtal-decor-bitch>
-<xtal-decor-lover></xtal-decor-lover>
-<xtal-decor-mess></xtal-decor-mess>
+<xtal-decor-foo as-a=bitch></xtal-decor-foo>
+<xtal-decor-bar as-a=lover></xtal-decor-bar>
+<xtal-decor-baz as-a=mess></xtal-decor-baz>
 ...
 <meredith-brooks 
     -is-a-bitch 
