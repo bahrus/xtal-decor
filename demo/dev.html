@@ -16,6 +16,12 @@
     is-a-saint
     ></meredith-brooks>
 
+    
+    <black-eyed-peas 
+        imma-be-on-the-next-level 
+        imma-be-rocking-over-that-bass-tremble
+        imma-be-chilling-with-my-motherfuckin-crew
+    ></black-eyed-peas>
 
     <script defer src="https://cdn.jsdelivr.net/npm/es-module-shims@0.2.7/dist/es-module-shims.js"></script>
     <script type="importmap-shim">
@@ -28,11 +34,18 @@
     </script>
     <script type="module-shim">
         import {decorate} from '../decorate.js';
+        import {upgrade} from '../upgrade.js';
         decorate({
-            rootNode: document.body,
+            nodeInShadowDOMRealm: document.body,
             treat: 'meredith-brooks',
-            asA: 'saint',
-
+            as: 'a-saint',
+            proxyHandler: {}
+        }); 
+        upgrade({
+            nodeInShadowDOMRealm: document.body,
+            upgrade: 'black-eyed-peas',
+            toBe: 'on-the-next-level',
+            proxyHandler: {}
         })
     </script>
 </body>

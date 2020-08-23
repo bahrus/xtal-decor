@@ -6,9 +6,9 @@
 
 Declarative
 ```html
-<xtal-decor-foo treat=bebe-rexha as-a=bitch></xtal-decor-foo> <!-- doesn't do anything -->
-<xtal-decor-bar treat=meredith-brooks as-a=saint></xtal-decor-bar>
-<xtal-decor-baz treat=* as-a=mess></xtal-decor-baz> <!-- only applies to bebe-rexha -->
+<xtal-decor-foo treat=bebe-rexha as=a-bitch></xtal-decor-foo> <!-- doesn't do anything -->
+<xtal-decor-bar treat=meredith-brooks as=a-saint></xtal-decor-bar>
+<xtal-decor-baz treat=* as=a-mess></xtal-decor-baz> <!-- only applies to bebe-rexha -->
 <xtal-decor-quz upgrade=blacked-eyed-peas to-be=on-the-next-level></xtal-decor-quz>
 ...
 
@@ -45,13 +45,14 @@ Declarative
 API
 ```JavaScript
 decorate({
-    shadowRoot: ... //Apply trait to all elements within the specified ShadowDOM realm.  If not provided, applies outside any ShadowDOM.
+    nodeInShadowDOMRealm: ... //Apply trait to all elements within the specified ShadowDOM realm.  If not provided, applies outside any ShadowDOM.
     treat: ... //CSS query to monitor for matching elements within ShadowDOM Realm.
-    asA: ...// monitor for attributes start with is-a-[asA.toLispCase()], 
+    as: ...// monitor for attributes start with is-a-[asA.toLispCase()], 
     proxyHandler: 
 });
 upgrade({
-    shadowRoot: ... //Apply trait to all elements within the same ShadowDOM realm as elementInScope.  If not provided, applies outside any ShadowDOM.
+    nodeInShadowDOMRealm: ... //Apply trait to all elements within the same ShadowDOM realm as elementInScope.  If not provided, applies outside any ShadowDOM.
+    treat: ... //CSS query to monitor for matching elements within ShadowDOM Realm.
     toBe: // monitor for attributes start with imma-be-[asA.toLispCase()], 
     proxyHandler: 
 });
