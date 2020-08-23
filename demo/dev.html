@@ -1,52 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
 </head>
+
 <body>
-    <meredith-brooks 
-    is-a-bitch 
-    is-a-lover 
-    is-a-child 
-    is-a-mother
-    is-a-sinner
-    is-a-saint
-    ></meredith-brooks>
+    <div>
+        <xtal-decor treat=button as=a-butterbeer-counter><script nomodule=ish>
+            const decoProps = {
+                actions: [
+                    ({count, self}) => {
+                        window.alert(count + " butterbeers sold");
+                        self.dispatchEvent(new Event('count-changed'));
+                    }
+                ],
+                on: {
+                    'click': ({self}) => {
+                        console.log(self);
+                        self.count++;
+                    }
+                },
+                init: ({self}) =>{
+                    self.count = 0;
+                }
+            }
+            Object.assign(selfish.parentElement, decoProps);
+        </script></xtal-decor>
 
-    
-    <black-eyed-peas 
-        imma-be-on-the-next-level 
-        imma-be-rocking-over-that-bass-tremble
-        imma-be-chilling-with-my-motherfuckin-crew
-    ></black-eyed-peas>
-
-    <script defer src="https://cdn.jsdelivr.net/npm/es-module-shims@0.2.7/dist/es-module-shims.js"></script>
-    <script type="importmap-shim">
-    {
-        "imports": {
-            "xtal-element/": "../node_modules/xtal-element/",
-            "trans-render/": "../node_modules/trans-render/"
+        <button is-a-butterbeer-counter disabled data-drink-selection="Butterbeer">Click me to Order Your Drink</button>
+        <p-d on="count-changed" prop=textContent val=target.count></p-d>
+        <span></span> drinks sold.
+        
+        <script defer src="https://cdn.jsdelivr.net/npm/es-module-shims@0.2.7/dist/es-module-shims.js"></script>
+        <script type="importmap-shim">
+        {
+            "imports": {
+                "xtal-element/": "../node_modules/xtal-element/",
+                "trans-render/": "../node_modules/trans-render/",
+                "p-et-alia/": "../node_modules/p-et-alia/",
+                "nomodule/": "../node_modules/nomodule/",
+                "css-observe/": "../node_modules/css-observe/"
+            }
         }
-    }
-    </script>
-    <script type="module-shim">
-        import {decorate} from '../decorate.js';
-        import {upgrade} from '../upgrade.js';
-        decorate({
-            nodeInShadowDOMRealm: document.body,
-            treat: 'meredith-brooks',
-            as: 'a-saint',
-            proxyHandler: {}
-        }); 
-        upgrade({
-            nodeInShadowDOMRealm: document.body,
-            upgrade: 'black-eyed-peas',
-            toBe: 'on-the-next-level',
-            proxyHandler: {}
-        })
-    </script>
+        </script>
+        <script type="module-shim">
+            import '../xtal-decor.js';
+            import 'p-et-alia/p-d.js';
+            import 'nomodule/no-module.js';
+        </script>
+    </div>
 </body>
+
 </html>

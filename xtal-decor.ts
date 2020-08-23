@@ -32,27 +32,28 @@ export const linkProxyHandler = ({actions, self, init, on}: XtalDecor) => {
 }
 
 const linkTargetProxyPair = ({proxyHandler, treat, as, self}: XtalDecor) => {
-    if(proxyHandler === undefined || treat === undefined || as === undefined){
-        decorate({
-            nodeInShadowDOMRealm: self,
-            treat: treat,
-            as: as,
-            proxyHandler: proxyHandler
-        }).then((value: TargetProxyPair<any>) => {
-            self.targetProxyPair = value;
-        })
-    }
+    if(proxyHandler === undefined || treat === undefined || as === undefined) return;
+    decorate({
+        nodeInShadowDOMRealm: self,
+        treat: treat,
+        as: as,
+        proxyHandler: proxyHandler
+    }).then((value: TargetProxyPair<any>) => {
+        self.targetProxyPair = value;
+    })
 }
 
 const initializeProxy = ({targetProxyPair, init, self, on}: XtalDecor) => {
+    if(targetProxyPair === undefined) return;
     const proxy = targetProxyPair.proxy as any;
     const prevSelf = proxy.self;
-    init(targetProxyPair.proxy);
+    proxy.self = proxy;
+    init(proxy);
     for(var key in on){
         const eventSetting = on[key];
         switch(typeof eventSetting){
             case 'function':
-                proxy.addEventListener(key, e => {
+                targetProxyPair.target.addEventListener(key, e => {
                     const prevSelf = proxy.self;
                     proxy.self = proxy;
                     eventSetting(proxy, e);
@@ -74,7 +75,7 @@ export class XtalDecor<TTargetElement extends HTMLElement = HTMLElement> extends
 
     static attributeProps = ({disabled, treat, as, upgrade, toBe, init, actions, proxyHandler, on, targetProxyPair}: XtalDecor) => ({
         str: [treat, as, upgrade, toBe],
-        obj: [proxyHandler, on, targetProxyPair],
+        obj: [proxyHandler, on, targetProxyPair, init],
         reflect: [treat, as, upgrade, toBe]
     } as AttributeProps);
 
