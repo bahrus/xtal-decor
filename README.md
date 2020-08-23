@@ -57,3 +57,22 @@ upgrade({
     proxyHandler: 
 });
 ```
+
+API example:
+
+```JavaScript
+import {decorate} from 'xtal-decor/decorate.js';
+import {upgrade} from 'xtal-decor/upgrade.js';
+decorate({
+    nodeInShadowDOMRealm: document.body,
+    treat: 'meredith-brooks',
+    as: 'a-saint',
+    proxyHandler: {}
+}); 
+upgrade({
+    nodeInShadowDOMRealm: document.body,
+    upgrade: 'black-eyed-peas',
+    toBe: 'on-the-next-level',
+    proxyHandler: {}
+})
+```
