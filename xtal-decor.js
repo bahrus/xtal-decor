@@ -1,103 +1,79 @@
-import { XtalDeco, linkNextSiblingTarget } from 'xtal-deco/xtal-deco.js';
-import { define, mergeProps } from 'xtal-element/xtal-latx.js';
-import { cd } from 'xtal-shell/cd.js';
-export const linkNextSiblingTargetExt = ({ self, intoNextElement }) => {
-    if (!intoNextElement)
+import { XtallatX, define, deconstruct } from 'xtal-element/xtal-latx.js';
+import { hydrate } from 'trans-render/hydrate.js';
+import { decorate } from './decorate.js';
+export const linkProxyHandler = ({ actions, self, init, on }) => {
+    if (actions === undefined || init === undefined || on === undefined)
         return;
-    linkNextSiblingTarget(self);
-};
-export const linkScriptsAndTemplates = ({ self, mutationCount }) => {
-    self._templates = Array.from(self.querySelectorAll('template'));
-    self._scripts = Array.from(self.querySelectorAll('script'));
-    // self.attachScripts();
-};
-export const appendTemplatesInNextSiblingTarget = ({ self, _templates, importTemplates, intoNextElement, nextSiblingTarget }) => {
-    if (!_templates || !importTemplates || !intoNextElement || !nextSiblingTarget)
-        return;
-    const target = nextSiblingTarget;
-    customElements.whenDefined(target.tagName.toLowerCase()).then(() => {
-        _templates.forEach((template) => {
-            if (template.dataset.xtalTemplInserted)
-                return;
-            let subTarget = target;
-            const path = template.dataset.path;
-            if (path) {
-                subTarget = cd(target, path);
+    self.proxyHandler = {
+        set: (target, key, value) => {
+            target[key] = value;
+            if (key === 'self')
+                return true;
+            actions.forEach(action => {
+                const dependencies = deconstruct(action);
+                if (dependencies.includes(key)) { //TODO:  symbols
+                    const prevSelf = target.self;
+                    target.self = target;
+                    action(target);
+                    target.self = prevSelf;
+                }
+            });
+            return true;
+        },
+        get: (obj, key) => {
+            let value = Reflect.get(obj, key);
+            if (typeof (value) == "function") {
+                return value.bind(obj);
             }
-            const clone = document.importNode(template.content, true);
-            subTarget.shadowRoot.appendChild(clone);
-            template.dataset.xtalTemplInserted = 'true';
-        });
-    });
+            return value;
+        }
+    };
 };
-export const attachScripts = ({}) => {
+const linkTargetProxyPair = ({ proxyHandler, treat, as, self }) => {
+    if (proxyHandler === undefined || treat === undefined || as === undefined) {
+        decorate({
+            nodeInShadowDOMRealm: self,
+            treat: treat,
+            as: as,
+            proxyHandler: proxyHandler
+        }).then((value) => {
+            self.targetProxyPair = value;
+        });
+    }
 };
-/**
- * Attach / override behavior in next element.  Insert template elements
- * @element xtal-decor
- */
-export class XtalDecor extends XtalDeco {
-    constructor() {
-        super(...arguments);
-        this.propActions = [
-            linkNextSiblingTargetExt,
-            linkScriptsAndTemplates,
-            appendTemplatesInNextSiblingTarget
-        ];
-    }
-    addMutationObserver() {
-        this._mutationObserver = new MutationObserver((mutationsList) => {
-            this.mutationCount++;
-        });
-        this._mutationObserver.observe(this, { childList: true });
-    }
-    doScripts(target) {
-        this._scripts.forEach((script) => {
-            if (script.dataset.xtalScriptAttached)
-                return;
-            let subTarget = target;
-            const path = script.dataset.path;
-            if (path) {
-                subTarget = cd(target, path);
-            }
-        });
-    }
-    attachScripts(target) {
-        if (!this._scripts)
-            return;
-        if (!target && this.intoNextElement)
-            target = this.nextSiblingTarget;
-        if (this.attachScript && target) {
-            const ln = target.localName;
-            if (ln.indexOf('-') > -1) {
-                customElements.whenDefined(target.tagName.toLowerCase()).then(() => {
-                    //const target = this._nextSibling;
-                    this.doScripts(target);
+const initializeProxy = ({ targetProxyPair, init, self, on }) => {
+    const proxy = targetProxyPair.proxy;
+    const prevSelf = proxy.self;
+    init(targetProxyPair.proxy);
+    for (var key in on) {
+        const eventSetting = on[key];
+        switch (typeof eventSetting) {
+            case 'function':
+                proxy.addEventListener(key, e => {
+                    const prevSelf = proxy.self;
+                    proxy.self = proxy;
+                    eventSetting(proxy, e);
+                    proxy.self = prevSelf;
                 });
-            }
-            else {
-                this.doScripts(target);
-            }
+                return eventSetting;
+                break;
+            default:
+                throw 'not implemented yet';
         }
     }
-    connectedCallback() {
-        super.connectedCallback();
-        this.addMutationObserver();
-        this.mutationCount = 0;
-    }
-    disconnectedCallback() {
-        if (this._mutationObserver)
-            this._mutationObserver.disconnect();
+    proxy.self = prevSelf;
+};
+export const propActions = [linkProxyHandler, linkTargetProxyPair, initializeProxy];
+export class XtalDecor extends XtallatX(hydrate(HTMLElement)) {
+    constructor() {
+        super(...arguments);
+        this.propActions = propActions;
     }
 }
-XtalDecor._addedNodeInsertionStyle = false;
 XtalDecor.is = 'xtal-decor';
-XtalDecor.attributeProps = ({ intoNextElement, importTemplates, mutationCount, _templates, _scripts }) => {
-    const ap = {
-        bool: [intoNextElement, importTemplates],
-        num: [mutationCount],
-        obj: [_templates, _scripts]
-    };
-    return mergeProps(ap, XtalDeco.props);
-};
+XtalDecor.attributeProps = ({ disabled, treat, as, upgrade, toBe, init, actions, proxyHandler, on, targetProxyPair }) => ({
+    str: [treat, as, upgrade, toBe],
+    obj: [proxyHandler, on, targetProxyPair],
+    reflect: [treat, as, upgrade, toBe]
+});
 define(XtalDecor);
