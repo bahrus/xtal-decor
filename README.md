@@ -2,7 +2,9 @@
 
 ## Syntax
 
+xtal-decor provides a base class which enables attaching ES6 proxies onto other "Shadow DOM peer citizens" -- native DOM or custom elements in the same Shadow DOM realm.
 
+Like [xtal-deco](https://github.com/bahrus/xtal-deco), properties init, on and actions allow you to define the behavior of the ES6 proxy with a minimum of fuss.
 
 Declarative
 ```html
