@@ -4,13 +4,15 @@
 
 xtal-decor provides a base class which enables attaching ES6 proxies onto other "Shadow DOM peer citizens" -- native DOM or custom elements in the same Shadow DOM realm.
 
-Like [xtal-deco](https://github.com/bahrus/xtal-deco), properties init, on and actions allow you to define the behavior of the ES6 proxy with a minimum of fuss.
+Like [xtal-deco](https://github.com/bahrus/xtal-deco), properties "init", "on" and "actions" allow you to define the behavior of the ES6 proxy with a minimum of fuss.
 
 Declarative
 ```html
-<xtal-decor-foo treat=bebe-rexha as=a-bitch></xtal-decor-foo> <!-- doesn't do anything -->
+<!-- doesn't do anything -->
+<xtal-decor-foo treat=bebe-rexha as=a-bitch></xtal-decor-foo> 
 <xtal-decor-bar treat=meredith-brooks as=a-saint></xtal-decor-bar>
-<xtal-decor-baz treat=* as=a-mess></xtal-decor-baz> <!-- only applies to bebe-rexha -->
+<!-- only applies to bebe-rexha -->
+<xtal-decor-baz treat=* as=a-mess></xtal-decor-baz> 
 <xtal-decor-quz upgrade=blacked-eyed-peas to-be=on-the-next-level></xtal-decor-quz>
 ...
 
@@ -50,13 +52,13 @@ decorate({
     nodeInShadowDOMRealm: ... //Apply trait to all elements within the specified ShadowDOM realm.  If not provided, applies outside any ShadowDOM.
     treat: ... //CSS query to monitor for matching elements within ShadowDOM Realm.
     as: ...// monitor for attributes start with is-a-[asA.toLispCase()], 
-    proxyHandler: 
+    proxyHandler: {...}
 });
 upgrade({
     nodeInShadowDOMRealm: ... //Apply trait to all elements within the same ShadowDOM realm as elementInScope.  If not provided, applies outside any ShadowDOM.
-    treat: ... //CSS query to monitor for matching elements within ShadowDOM Realm.
+    upgrade: ... //CSS query to monitor for matching elements within ShadowDOM Realm.
     toBe: // monitor for attributes start with imma-be-[asA.toLispCase()], 
-    proxyHandler: 
+    proxyHandler: {...}
 });
 ```
 
