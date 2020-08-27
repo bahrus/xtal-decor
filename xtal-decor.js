@@ -1,6 +1,7 @@
 import { XtallatX, define, deconstruct } from 'xtal-element/xtal-latx.js';
 import { hydrate } from 'trans-render/hydrate.js';
 import { decorate } from './decorate.js';
+import { upgrade as upgr } from './upgrade.js';
 export const linkProxyHandler = ({ actions, self, init, on }) => {
     if (actions === undefined || init === undefined || on === undefined)
         return;
@@ -29,7 +30,7 @@ export const linkProxyHandler = ({ actions, self, init, on }) => {
         }
     };
 };
-const linkTargetProxyPair = ({ proxyHandler, treat, as, self }) => {
+const linkDecoratorProxyPair = ({ proxyHandler, treat, as, self }) => {
     if (proxyHandler === undefined || treat === undefined || as === undefined)
         return;
     decorate({
@@ -39,6 +40,16 @@ const linkTargetProxyPair = ({ proxyHandler, treat, as, self }) => {
         proxyHandler: proxyHandler
     }).then((value) => {
         self.targetProxyPair = value;
+    });
+};
+const linkUpgradeProxyPair = ({ proxyHandler, upgrade, toBe, self }) => {
+    if (proxyHandler === undefined || upgrade === undefined || toBe === undefined)
+        return;
+    upgr({
+        nodeInShadowDOMRealm: self,
+        upgrade: upgrade,
+        toBe: toBe,
+        proxyHandler: proxyHandler,
     });
 };
 const initializeProxy = ({ targetProxyPair, init, self, on }) => {
@@ -66,7 +77,7 @@ const initializeProxy = ({ targetProxyPair, init, self, on }) => {
     }
     proxy.self = prevSelf;
 };
-export const propActions = [linkProxyHandler, linkTargetProxyPair, initializeProxy];
+export const propActions = [linkProxyHandler, linkDecoratorProxyPair, linkUpgradeProxyPair, initializeProxy];
 export class XtalDecor extends XtallatX(hydrate(HTMLElement)) {
     constructor() {
         super(...arguments);
