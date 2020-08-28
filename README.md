@@ -72,11 +72,15 @@ decorate({
     treat: 'meredith-brooks',
     as: 'a-saint',
     proxyHandler: {}
+}, ({target, proxy}) => {
+    ...
 }); 
 upgrade({
     nodeInShadowDOMRealm: document.body,
     upgrade: 'black-eyed-peas',
     toBe: 'on-the-next-level',
     proxyHandler: {}
-})
+}, ({target, proxy}) => {
+    ...
+});
 ```
