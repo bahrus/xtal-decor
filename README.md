@@ -51,15 +51,15 @@ API
 decorate({
     nodeInShadowDOMRealm: ... //Apply trait to all elements within the specified ShadowDOM realm.  If not provided, applies outside any ShadowDOM.
     treat: ... //CSS query to monitor for matching elements within ShadowDOM Realm.
-    as: ...// monitor for attributes start with is-a-[asA.toLispCase()], 
+    as: ...// monitor for attributes matching is-[as], 
     proxyHandler: {...}
-});
+}, callback);
 upgrade({
     nodeInShadowDOMRealm: ... //Apply trait to all elements within the same ShadowDOM realm as elementInScope.  If not provided, applies outside any ShadowDOM.
     upgrade: ... //CSS query to monitor for matching elements within ShadowDOM Realm.
-    toBe: // monitor for attributes start with imma-be-[asA.toLispCase()], 
+    toBe: // monitor for attributes start with imma-be-[toBe], 
     proxyHandler: {...}
-});
+}, callback);
 ```
 
 API example:

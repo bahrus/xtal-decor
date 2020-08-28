@@ -51,6 +51,8 @@ const linkUpgradeProxyPair = ({proxyHandler, upgrade, toBe, self}: XtalDecor) =>
         upgrade: upgrade,
         toBe: toBe,
         proxyHandler: proxyHandler,
+    }).then((value: TargetProxyPair<any>) => {
+        
     })
 }
 

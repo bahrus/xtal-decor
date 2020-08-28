@@ -50,6 +50,7 @@ const linkUpgradeProxyPair = ({ proxyHandler, upgrade, toBe, self }) => {
         upgrade: upgrade,
         toBe: toBe,
         proxyHandler: proxyHandler,
+    }).then((value) => {
     });
 };
 const initializeProxy = ({ targetProxyPair, init, self, on }) => {

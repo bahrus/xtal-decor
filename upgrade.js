@@ -1,5 +1,5 @@
 import { addCSSListener } from 'xtal-element/observeCssSelector.js';
-export function upgrade(args) {
+export function upgrade(args, callback) {
     const id = 'a' + (new Date()).valueOf().toString();
     const immaBeAttrib = `imma-be-${args.toBe}`;
     addCSSListener(id, args.nodeInShadowDOMRealm, `${args.upgrade}[${immaBeAttrib}]`, (e) => {
@@ -8,5 +8,7 @@ export function upgrade(args) {
         target[Symbol.for(args.toBe)] = proxy;
         target.setAttribute(`is-${args.toBe}`, '');
         target.removeAttribute(immaBeAttrib);
+        if (callback !== undefined)
+            callback({ target, proxy });
     });
 }
