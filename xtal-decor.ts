@@ -32,28 +32,32 @@ export const linkProxyHandler = ({actions, self, init, on}: XtalDecor) => {
     }
 }
 
+
+
 const linkDecoratorProxyPair = ({proxyHandler, treat, as, self}: XtalDecor) => {
     if(proxyHandler === undefined || treat === undefined || as === undefined) return;
+    const callback = (tpp: TargetProxyPair<any>) => {
+        self.targetProxyPair = tpp;
+    }
     decorate({
         nodeInShadowDOMRealm: self,
         treat: treat,
         as: as,
         proxyHandler: proxyHandler
-    }).then((value: TargetProxyPair<any>) => {
-        self.targetProxyPair = value;
-    })
+    }, callback);
 }
 
 const linkUpgradeProxyPair = ({proxyHandler, upgrade, toBe, self}: XtalDecor) => {
     if(proxyHandler === undefined || upgrade === undefined || toBe === undefined) return;
+    const callback = (tpp: TargetProxyPair<any>) => {
+        self.targetProxyPair = tpp;
+    }
     upgr({
         nodeInShadowDOMRealm: self,
         upgrade: upgrade,
         toBe: toBe,
         proxyHandler: proxyHandler,
-    }).then((value: TargetProxyPair<any>) => {
-        
-    })
+    }, callback);
 }
 
 const initializeProxy = ({targetProxyPair, init, self, on}: XtalDecor) => {

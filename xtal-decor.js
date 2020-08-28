@@ -33,25 +33,28 @@ export const linkProxyHandler = ({ actions, self, init, on }) => {
 const linkDecoratorProxyPair = ({ proxyHandler, treat, as, self }) => {
     if (proxyHandler === undefined || treat === undefined || as === undefined)
         return;
+    const callback = (tpp) => {
+        self.targetProxyPair = tpp;
+    };
     decorate({
         nodeInShadowDOMRealm: self,
         treat: treat,
         as: as,
         proxyHandler: proxyHandler
-    }).then((value) => {
-        self.targetProxyPair = value;
-    });
+    }, callback);
 };
 const linkUpgradeProxyPair = ({ proxyHandler, upgrade, toBe, self }) => {
     if (proxyHandler === undefined || upgrade === undefined || toBe === undefined)
         return;
+    const callback = (tpp) => {
+        self.targetProxyPair = tpp;
+    };
     upgr({
         nodeInShadowDOMRealm: self,
         upgrade: upgrade,
         toBe: toBe,
         proxyHandler: proxyHandler,
-    }).then((value) => {
-    });
+    }, callback);
 };
 const initializeProxy = ({ targetProxyPair, init, self, on }) => {
     if (targetProxyPair === undefined)
