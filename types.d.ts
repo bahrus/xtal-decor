@@ -40,6 +40,6 @@ export type TargetProxyPairCallback<T extends EventTarget> = (tpp: TargetProxyPa
 
 type eventHandlers = {[key: string]: ((e: Event) => void)[]};
 
-export interface SelfReferentialElement<T extends HTMLElement>{
-    self: T
+export interface SelfReferentialHTMLElement extends HTMLElement{
+    self: HTMLElement;
 }
