@@ -2,6 +2,7 @@ import { XtallatX, define, deconstruct } from 'xtal-element/xtal-latx.js';
 import { hydrate } from 'trans-render/hydrate.js';
 import { decorate } from './decorate.js';
 import { upgrade as upgr } from './upgrade.js';
+export { define } from 'xtal-element/xtal-latx.js';
 export const linkProxyHandler = ({ actions, self, init, on }) => {
     if (actions === undefined || init === undefined || on === undefined)
         return;

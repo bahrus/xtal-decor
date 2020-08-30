@@ -39,3 +39,7 @@ export interface TargetProxyPair<T extends EventTarget> {
 export type TargetProxyPairCallback<T extends EventTarget> = (tpp: TargetProxyPair<T>) => void;
 
 type eventHandlers = {[key: string]: ((e: Event) => void)[]};
+
+export interface SelfReferentialElement<T extends HTMLElement>{
+    self: T
+}

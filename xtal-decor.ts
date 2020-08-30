@@ -3,6 +3,9 @@ import { hydrate } from 'trans-render/hydrate.js';
 import { decorate } from './decorate.js';
 import { upgrade as upgr } from './upgrade.js';
 import {TargetProxyPair} from './types.d.js';
+export {define, AttributeProps, PropAction} from 'xtal-element/xtal-latx.js';
+export {SelfReferentialElement} from './types.d.js';
+
 
 export const linkProxyHandler = ({actions, self, init, on}: XtalDecor) => {
     if(actions === undefined || init === undefined || on === undefined) return;
