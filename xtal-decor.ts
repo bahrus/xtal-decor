@@ -3,7 +3,7 @@ import { hydrate } from 'trans-render/hydrate.js';
 import { decorate } from './decorate.js';
 import { upgrade as upgr } from './upgrade.js';
 import {TargetProxyPair} from './types.d.js';
-export {define, AttributeProps, PropAction, EventSettings} from 'xtal-element/xtal-latx.js';
+export {define, AttributeProps, PropAction, EventSettings, mergeProps} from 'xtal-element/xtal-latx.js';
 export {SelfReferentialHTMLElement} from './types.d.js';
 
 
