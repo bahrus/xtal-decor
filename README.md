@@ -13,7 +13,7 @@ Declarative
 <xtal-decor-bar treat=meredith-brooks as=a-saint></xtal-decor-bar>
 <!-- only applies to bebe-rexha -->
 <xtal-decor-baz treat=* as=a-mess></xtal-decor-baz> 
-<xtal-decor-quz upgrade=blacked-eyed-peas to-be=on-the-next-level></xtal-decor-quz>
+<xtal-decor-quz upgrade=blacked-eyed-peas if-wants-to-be=on-the-next-level></xtal-decor-quz>
 ...
 
 <meredith-brooks 
@@ -49,13 +49,13 @@ Declarative
 API
 ```JavaScript
 decorate({
-    nodeInShadowDOMRealm: ... //Apply trait to all elements within the specified ShadowDOM realm.  If not provided, applies outside any ShadowDOM.
+    nodeInShadowDOMRealm: ... //Apply trait to all elements within the specified ShadowDOM realm.
     treat: ... //CSS query to monitor for matching elements within ShadowDOM Realm.
     as: ...// monitor for attributes matching is-[as], 
     proxyHandler: {...}
 }, callback);
 upgrade({
-    nodeInShadowDOMRealm: ... //Apply trait to all elements within the same ShadowDOM realm as elementInScope.  If not provided, applies outside any ShadowDOM.
+    nodeInShadowDOMRealm: ... //Apply trait to all elements within the same ShadowDOM realm.
     upgrade: ... //CSS query to monitor for matching elements within ShadowDOM Realm.
     toBe: // monitor for attributes start with imma-be-[toBe], 
     proxyHandler: {...}
@@ -88,16 +88,14 @@ upgrade({
 ## Property Forwarding:
 
 ```html
-<xtal-decor-exp treat=details as=all-expandable></xtal-decor-exp>
-<xtal-decor-col treat=details as=all-collapsible></xtal-decor-col>
+<xtal-decor-exp upgrade=details if-wants-to-be=all-expandable></xtal-decor-exp>
+<xtal-decor-col upgrade=details if-wants-to-be=all-collapsible></xtal-decor-col>
 
 ...
 
-<proxy-props>
-        <for-closest all-expandable></for-closest>
-        <for-closest all-collapsible></for-closest>
-</proxy-props>
-<details is-all-expandable is-all-collapsible>
+<proxy-props for=all-expandable></proxy-props>
+<proxy-props for=all-collapsible>
+<details imma-be-all-expandable imma-be-all-collapsible>
         <summary>...</summary>
         ...
         <details>
