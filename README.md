@@ -84,3 +84,24 @@ upgrade({
     ...
 });
 ```
+
+## Property Forwarding:
+
+```html
+<xtal-decor-exp treat=details as=all-expandable></xtal-decor-exp>
+<xtal-decor-col treat=details as=all-collapsible></xtal-decor-col>
+
+...
+
+<proxy-props>
+        <for-closest all-expandable></for-closest>
+        <for-closest all-collapsible></for-closest>
+</proxy-props>
+<details is-all-expandable is-all-collapsible>
+        <summary>...</summary>
+        ...
+        <details>
+        ...
+        </details>
+</details>
+```
