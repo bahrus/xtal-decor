@@ -8,29 +8,12 @@ Like [xtal-deco](https://github.com/bahrus/xtal-deco), properties "init", "on" a
 
 Declarative
 ```html
-<!-- doesn't do anything -->
-<xtal-decor-foo treat=bebe-rexha as=a-bitch></xtal-decor-foo> 
-<xtal-decor-bar treat=meredith-brooks as=a-saint></xtal-decor-bar>
-<!-- only applies to bebe-rexha -->
-<xtal-decor-baz treat=* as=a-mess></xtal-decor-baz> 
-<xtal-decor-quz upgrade=blacked-eyed-peas if-wants-to-be=on-the-next-level></xtal-decor-quz>
+<xtal-decor-foo upgrade=blacked-eyed-peas if-wants-to-be=on-the-next-level></xtal-decor-foo>
+<xtal-decor-bar upgrade=black-eyed-peas if-wants-to-be=rocking-over-that-bass-tremble></xtal-decor-foo>
+<xtal-decor-baz upgrade=blacked-eyed-peas if-wants-to-be=chilling-with-my-motherfuckin-crew></xtal-decor-foo>
 ...
 
-<meredith-brooks 
-    is-a-bitch 
-    is-a-lover 
-    is-a-child 
-    is-a-mother
-    is-a-sinner
-    is-a-saint
-></meredith-brooks>
 
-<bebe-rexha 
-    is-a-mess 
-    is-a-loser 
-    is-a-hater 
-    is-a-user
-></bebe-rexha>
 
 <black-eyed-peas 
     imma-be-on-the-next-level 
@@ -46,18 +29,13 @@ Declarative
 ></black-eyed-peas>
 ```
 
-API
+Web component base class builds on api:
+
 ```JavaScript
-decorate({
-    nodeInShadowDOMRealm: ... //Apply trait to all elements within the specified ShadowDOM realm.
-    treat: ... //CSS query to monitor for matching elements within ShadowDOM Realm.
-    as: ...// monitor for attributes matching is-[as], 
-    proxyHandler: {...}
-}, callback);
 upgrade({
-    nodeInShadowDOMRealm: ... //Apply trait to all elements within the same ShadowDOM realm.
+    shadowDOMPeer: ... //Apply trait to all elements within the same ShadowDOM realm as this node.
     upgrade: ... //CSS query to monitor for matching elements within ShadowDOM Realm.
-    toBe: // monitor for attributes start with imma-be-[toBe], 
+    ifWantsYoBe: // monitor for attributes start with imma-be-[toBe], 
     proxyHandler: {...}
 }, callback);
 ```
@@ -65,20 +43,11 @@ upgrade({
 API example:
 
 ```JavaScript
-import {decorate} from 'xtal-decor/decorate.js';
 import {upgrade} from 'xtal-decor/upgrade.js';
-decorate({
-    nodeInShadowDOMRealm: document.body,
-    treat: 'meredith-brooks',
-    as: 'a-saint',
-    proxyHandler: {}
-}, ({target, proxy}) => {
-    ...
-}); 
 upgrade({
-    nodeInShadowDOMRealm: document.body,
+    shadowDOMPeer: document.body,
     upgrade: 'black-eyed-peas',
-    toBe: 'on-the-next-level',
+    ifWantsToBe: 'on-the-next-level',
     proxyHandler: {}
 }, ({target, proxy}) => {
     ...
@@ -94,7 +63,7 @@ upgrade({
 ...
 
 <proxy-props for=all-expandable></proxy-props>
-<proxy-props for=all-collapsible>
+<proxy-props for=all-collapsible></proxy-props>
 <details imma-be-all-expandable imma-be-all-collapsible>
         <summary>...</summary>
         ...
