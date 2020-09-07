@@ -57,8 +57,8 @@ upgrade({
 ## Property Forwarding:
 
 ```html
-<xtal-decor-exp upgrade=details if-wants-to-be=all-expandable></xtal-decor-exp>
-<xtal-decor-col upgrade=details if-wants-to-be=all-collapsible></xtal-decor-col>
+<xtal-decor-exp upgrade=details if-wants-to-be=all-expandable auto-forward></xtal-decor-exp>
+<xtal-decor-col upgrade=details if-wants-to-be=all-collapsible auto-forward></xtal-decor-col>
 
 ...
 

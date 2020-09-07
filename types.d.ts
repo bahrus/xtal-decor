@@ -4,10 +4,6 @@ export interface UpgradeArg<T extends Object>{
      */
     shadowDomPeer: Node,
     /**
-     * ES6 proxy handler to attach
-     */
-    proxyHandler: ProxyHandler<T>,
-    /**
      * CSS query to monitor for matching elements within ShadowDOM Realm.
      */
     upgrade: string,
@@ -22,7 +18,12 @@ export interface TargetProxyPair<T extends EventTarget> {
     target: T,
 }
 
-export type TargetProxyPairCallback<T extends EventTarget> = (tpp: TargetProxyPair<T>) => void;
+// export interface ProxyVirtualPropsPair<T extends EventTarget>{
+//     proxy: T,
+
+// }
+
+// export type TargetProxyPairCallback<T extends EventTarget> = (tpp: TargetProxyPair<T>) => void;
 
 type eventHandlers = {[key: string]: ((e: Event) => void)[]};
 
