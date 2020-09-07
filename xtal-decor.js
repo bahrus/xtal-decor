@@ -2,23 +2,6 @@ import { XtallatX, define, deconstruct, camelToLisp } from 'xtal-element/xtal-la
 import { hydrate } from 'trans-render/hydrate.js';
 import { upgrade as upgr } from './upgrade.js';
 export { define, mergeProps } from 'xtal-element/xtal-latx.js';
-// // https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Mutation_events#Mutation_Observers_alternatives_examples
-// //can't we use https://developer.mozilla.org/en-US/docs/Web/API/Node/contains#:~:text=The%20Node.,direct%20children%2C%20and%20so%20on.?
-// function onRemove(element: Element, callback: Function) {
-//     let observer = new MutationObserver(mutations => {
-//         mutations.forEach(mutation =>{
-//             mutation.removedNodes.forEach(removed =>{
-//                 if(element === removed){
-//                     callback();
-//                     observer.disconnect();
-//                 }
-//             })
-//         })
-//     });
-//     observer.observe(element.parentElement || element.getRootNode(), {
-//         childList: true,
-//     });
-// };
 export function hasUndefined(arr) {
     return arr.includes(undefined);
 }
