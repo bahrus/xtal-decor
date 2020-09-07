@@ -1,8 +1,8 @@
-import { XtallatX, define, AttributeProps, PropAction, deconstruct, EventSettings} from 'xtal-element/xtal-latx.js';
+import { XtallatX, define, AttributeProps, PropAction, deconstruct, EventSettings, camelToLisp } from 'xtal-element/xtal-latx.js';
 import { hydrate } from 'trans-render/hydrate.js';
 import { upgrade as upgr } from './upgrade.js';
 import { TargetProxyPair } from './types.d.js';
-export {define, AttributeProps, PropAction, EventSettings, mergeProps} from 'xtal-element/xtal-latx.js';
+export {define, AttributeProps, PropAction, EventSettings, mergeProps } from 'xtal-element/xtal-latx.js';
 export {SelfReferentialHTMLElement} from './types.d.js';
 
 // https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Mutation_events#Mutation_Observers_alternatives_examples
@@ -60,7 +60,7 @@ export const linkNewTargetProxyPair = ({actions, self, virtualProps, targetToPro
             });
             switch(typeof key){
                 case 'string':
-                    target.dispatchEvent(new CustomEvent(key + '-changed', {
+                    target.dispatchEvent(new CustomEvent(camelToLisp(key) + '-changed', {
                         detail:{
                             value: value
                         }
@@ -111,15 +111,73 @@ const initializeProxy = ({newTargetProxyPair, init, self, on}: XtalDecor) => {
     delete self.newTargetProxyPair;
 }
 
-export const propActions = [linkUpgradeProxyPair, linkNewTargetProxyPair, initializeProxy] as PropAction<any>[];
+const linkForwarder = ({autoForward, ifWantsToBe, self}: XtalDecor) => {
+    if(!autoForward) return;
+    import('css-observe/css-observe.js');
+    const observer = document.createElement('css-observe') as any;
+    observer.observe = true;
+    observer.selector = `proxy-props[for="${ifWantsToBe}"]`;
+    observer.addEventListener('latest-match-changed', e => {
+        self.newForwarder = observer.latestMatch;
+    });
+    self.appendChild(observer);
+}
+
+//https://gomakethings.com/finding-the-next-and-previous-sibling-elements-that-match-a-selector-with-vanilla-js/
+function getNextSibling (elem: Element, selector: string | undefined) {
+
+	// Get the next sibling element
+    var sibling = elem.nextElementSibling;
+    if(selector === undefined) return sibling;
+
+	// If the sibling matches our selector, use it
+	// If not, jump to the next sibling and continue the loop
+	while (sibling) {
+		if (sibling.matches(selector)) return sibling;
+		sibling = sibling.nextElementSibling
+	}
+    return sibling;
+};
+
+const doAutoForward = ({newForwarder, upgrade, ifWantsToBe, initializedSym, targetToProxyMap}: XtalDecor) => {
+    if(newForwarder === undefined) return;
+    const proxy = new Proxy(newForwarder, {
+        set: (target, key, value) => {
+            target[key] = value;
+            const el = getNextSibling(target, `${upgrade}[is-${ifWantsToBe}]`);
+            if(el === undefined) return true;
+            const proxy = targetToProxyMap.get(el);
+            if(proxy === undefined) return true;
+            if(el[initializedSym] === undefined){
+                const props: any = {};
+                Object.getOwnPropertyNames(target).forEach(targetKey => {
+                    props[targetKey] = target[targetKey];
+                });
+                Object.assign(proxy, props);
+                el[initializedSym] = true;
+            }else{
+                proxy[key] = value;
+            }
+            return true;
+        },
+        // get: (target, key) => {
+        //     const el = getNextSibling(target, `${upgrade}[is-${ifWantsToBe}]`);
+        //     if(el === undefined) return undefined;
+
+        // }
+    });
+};
+
+export const propActions = [linkUpgradeProxyPair, linkNewTargetProxyPair, initializeProxy, linkForwarder, doAutoForward] as PropAction<any>[];
 
 export class XtalDecor<TTargetElement extends Element = HTMLElement> extends XtallatX(hydrate(HTMLElement)){
     static is = 'xtal-decor';
 
     static attributeProps = ({upgrade, ifWantsToBe, init, actions, 
-            on, newTarget, newTargetProxyPair, targetToProxyMap}: XtalDecor) => ({
+            on, newTarget, newTargetProxyPair, targetToProxyMap, autoForward, newForwarder}: XtalDecor) => ({
         str: [upgrade, ifWantsToBe],
-        obj: [on, newTarget, init, targetToProxyMap, actions, newTargetProxyPair],
+        bool: [autoForward],
+        obj: [on, newTarget, init, targetToProxyMap, actions, newTargetProxyPair, newForwarder],
         reflect: [upgrade, ifWantsToBe]
     } as AttributeProps);
 
@@ -137,14 +195,25 @@ export class XtalDecor<TTargetElement extends Element = HTMLElement> extends Xta
 
     newTarget: TTargetElement;
 
+    newForwarder: HTMLElement;
+
     newTargetProxyPair: TargetProxyPair<TTargetElement> | undefined;
 
     targetToProxyMap: WeakMap<any, any> = new WeakMap();
+
+    autoForward: boolean | undefined;
+
+    initializedSym = Symbol();
 
     /**
      * Set these properties via a WeakMap, rather than on the (native) element itself.
      */
     virtualProps: string[] | undefined;
+
+    connectedCallback(){
+        this.style.display = 'none';
+        super.connectedCallback();
+    }
 
 }
 

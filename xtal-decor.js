@@ -1,4 +1,4 @@
-import { XtallatX, define, deconstruct } from 'xtal-element/xtal-latx.js';
+import { XtallatX, define, deconstruct, camelToLisp } from 'xtal-element/xtal-latx.js';
 import { hydrate } from 'trans-render/hydrate.js';
 import { upgrade as upgr } from './upgrade.js';
 export { define, mergeProps } from 'xtal-element/xtal-latx.js';
@@ -59,7 +59,7 @@ export const linkNewTargetProxyPair = ({ actions, self, virtualProps, targetToPr
             });
             switch (typeof key) {
                 case 'string':
-                    target.dispatchEvent(new CustomEvent(key + '-changed', {
+                    target.dispatchEvent(new CustomEvent(camelToLisp(key) + '-changed', {
                         detail: {
                             value: value
                         }
@@ -110,18 +110,79 @@ const initializeProxy = ({ newTargetProxyPair, init, self, on }) => {
     }
     delete self.newTargetProxyPair;
 };
-export const propActions = [linkUpgradeProxyPair, linkNewTargetProxyPair, initializeProxy];
+const linkForwarder = ({ autoForward, ifWantsToBe, self }) => {
+    if (!autoForward)
+        return;
+    import('css-observe/css-observe.js');
+    const observer = document.createElement('css-observe');
+    observer.observe = true;
+    observer.selector = `proxy-props[for="${ifWantsToBe}"]`;
+    observer.addEventListener('latest-match-changed', e => {
+        self.newForwarder = observer.latestMatch;
+    });
+    self.appendChild(observer);
+};
+//https://gomakethings.com/finding-the-next-and-previous-sibling-elements-that-match-a-selector-with-vanilla-js/
+function getNextSibling(elem, selector) {
+    // Get the next sibling element
+    var sibling = elem.nextElementSibling;
+    if (selector === undefined)
+        return sibling;
+    // If the sibling matches our selector, use it
+    // If not, jump to the next sibling and continue the loop
+    while (sibling) {
+        if (sibling.matches(selector))
+            return sibling;
+        sibling = sibling.nextElementSibling;
+    }
+    return sibling;
+}
+;
+const doAutoForward = ({ newForwarder, upgrade, ifWantsToBe, initializedSym, targetToProxyMap }) => {
+    if (newForwarder === undefined)
+        return;
+    const proxy = new Proxy(newForwarder, {
+        set: (target, key, value) => {
+            target[key] = value;
+            const el = getNextSibling(target, `${upgrade}[is-${ifWantsToBe}]`);
+            if (el === undefined)
+                return true;
+            const proxy = targetToProxyMap.get(el);
+            if (proxy === undefined)
+                return true;
+            if (el[initializedSym] === undefined) {
+                const props = {};
+                Object.getOwnPropertyNames(target).forEach(targetKey => {
+                    props[targetKey] = target[targetKey];
+                });
+                Object.assign(proxy, props);
+                el[initializedSym] = true;
+            }
+            else {
+                proxy[key] = value;
+            }
+            return true;
+        },
+    });
+};
+export const propActions = [linkUpgradeProxyPair, linkNewTargetProxyPair, initializeProxy, linkForwarder, doAutoForward];
 export class XtalDecor extends XtallatX(hydrate(HTMLElement)) {
     constructor() {
         super(...arguments);
         this.propActions = propActions;
         this.targetToProxyMap = new WeakMap();
+        this.initializedSym = Symbol();
+    }
+    connectedCallback() {
+        this.style.display = 'none';
+        super.connectedCallback();
     }
 }
 XtalDecor.is = 'xtal-decor';
-XtalDecor.attributeProps = ({ upgrade, ifWantsToBe, init, actions, on, newTarget, newTargetProxyPair, targetToProxyMap }) => ({
+XtalDecor.attributeProps = ({ upgrade, ifWantsToBe, init, actions, on, newTarget, newTargetProxyPair, targetToProxyMap, autoForward, newForwarder }) => ({
     str: [upgrade, ifWantsToBe],
-    obj: [on, newTarget, init, targetToProxyMap, actions, newTargetProxyPair],
+    bool: [autoForward],
+    obj: [on, newTarget, init, targetToProxyMap, actions, newTargetProxyPair, newForwarder],
     reflect: [upgrade, ifWantsToBe]
 });
 define(XtalDecor);
