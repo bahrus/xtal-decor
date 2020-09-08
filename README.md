@@ -35,8 +35,7 @@ Web component base class builds on api:
 upgrade({
     shadowDOMPeer: ... //Apply trait to all elements within the same ShadowDOM realm as this node.
     upgrade: ... //CSS query to monitor for matching elements within ShadowDOM Realm.
-    ifWantsYoBe: // monitor for attributes start with imma-be-[toBe], 
-    proxyHandler: {...}
+    ifWantsToBe: // monitor for attributes start with imma-be-[toBe], 
 }, callback);
 ```
 
@@ -48,8 +47,7 @@ upgrade({
     shadowDOMPeer: document.body,
     upgrade: 'black-eyed-peas',
     ifWantsToBe: 'on-the-next-level',
-    proxyHandler: {}
-}, ({target, proxy}) => {
+}, target => {
     ...
 });
 ```
