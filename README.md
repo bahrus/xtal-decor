@@ -16,9 +16,9 @@ Declarative
 
 
 <black-eyed-peas 
-    imma-be-on-the-next-level 
-    imma-be-rocking-over-that-bass-tremble
-    imma-be-chilling-with-my-motherfuckin-crew
+    be-on-the-next-level 
+    be-rocking-over-that-bass-tremble
+    be-chilling-with-my-motherfuckin-crew
 ></black-eyed-peas>
 
 <!-- Becomes, after upgrading -->
@@ -62,7 +62,7 @@ upgrade({
 
 <proxy-props for=all-expandable></proxy-props>
 <proxy-props for=all-collapsible></proxy-props>
-<details imma-be-all-expandable imma-be-all-collapsible>
+<details be-all-expandable be-all-collapsible>
         <summary>...</summary>
         ...
         <details>

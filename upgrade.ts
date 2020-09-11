@@ -3,11 +3,12 @@ import { UpgradeArg } from './types.d.js';
 
 export function upgrade<T extends EventTarget>(args: UpgradeArg<T>, callback?: (t: T) => void){
     const id = 'a' + (new Date()).valueOf().toString();
-    const immaBeAttrib = `imma-be-${args.ifWantsToBe}`;
-    addCSSListener(id, args.shadowDomPeer,`${args.upgrade}[${immaBeAttrib}]`, (e: Event) => {
+    const beAttrib = `be-${args.ifWantsToBe}`;
+    addCSSListener(id, args.shadowDomPeer,`${args.upgrade}[${beAttrib}]`, (e: Event) => {
         const target = e.target;
+        const val =  (target as Element).getAttribute(beAttrib);
         (target as Element).setAttribute(`is-${args.ifWantsToBe}`, '');
-        (target as Element).removeAttribute(immaBeAttrib);
+        (target as Element).removeAttribute(beAttrib);
         if(callback !== undefined) callback(target as T);
     });
         
