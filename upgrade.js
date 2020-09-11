@@ -5,7 +5,7 @@ export function upgrade(args, callback) {
     addCSSListener(id, args.shadowDomPeer, `${args.upgrade}[${beAttrib}]`, (e) => {
         const target = e.target;
         const val = target.getAttribute(beAttrib);
-        target.setAttribute(`is-${args.ifWantsToBe}`, '');
+        target.setAttribute(`is-${args.ifWantsToBe}`, val);
         target.removeAttribute(beAttrib);
         if (callback !== undefined)
             callback(target);
