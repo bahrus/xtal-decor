@@ -75,7 +75,7 @@ expandableProxy.expandAll = true;
 </script>
 ```
 
-## Setting properties via attribute [TODO]:
+## Setting properties via attribute:
 
 ```html
 <list-sorter upgrade=* if-wants-to-be=sorted></list-sorter>
