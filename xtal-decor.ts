@@ -21,8 +21,16 @@ const linkUpgradeProxyPair = ({upgrade, ifWantsToBe, self, on, init, actions}: X
     }, callback);
 }
 
-export const linkNewTargetProxyPair = ({actions, self, virtualProps, targetToProxyMap, newTarget}: XtalDecor) => {
+export const linkNewTargetProxyPair = ({actions, self, virtualProps, targetToProxyMap, newTarget, ifWantsToBe}: XtalDecor) => {
     if(newTarget === undefined) return;
+    const existingProxy = targetToProxyMap.get(newTarget);
+    if(existingProxy){
+        const attr = newTarget.getAttribute('is-' + ifWantsToBe);
+        if(attr !== null && attr.length > 0){
+            Object.assign(existingProxy, JSON.parse(attr));
+        }
+        return;
+    }
     const virtualPropHolder = {};
     const proxy = new Proxy(newTarget, {
         set: (target: any, key, value) => {
