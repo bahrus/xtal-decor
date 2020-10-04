@@ -72,12 +72,16 @@ export const linkNewTargetProxyPair = ({actions, self, virtualProps, targetToPro
     delete self.newTarget;
 }
 
-const initializeProxy = ({newTargetProxyPair, init, self, on}: XtalDecor) => {
+const initializeProxy = ({newTargetProxyPair, init, self, on, ifWantsToBe}: XtalDecor) => {
     if(newTargetProxyPair === undefined) return;
     const newProxy = newTargetProxyPair.proxy;
     (<any>newProxy).self = newProxy;
     const newTarget = newTargetProxyPair.target;
     init(newProxy);
+    const attr = newTarget.getAttribute('is-' + ifWantsToBe);
+    if(attr !== null && attr.length > 0){
+        Object.assign(newProxy, JSON.parse(attr));
+    }
     for(var key in on){
         const eventSetting = on[key];
         switch(typeof eventSetting){
@@ -156,7 +160,7 @@ export class XtalDecor<TTargetElement extends Element = HTMLElement> extends Xta
     static is = 'xtal-decor';
 
     static attributeProps = ({upgrade, ifWantsToBe, init, actions, 
-            on, newTarget, newTargetProxyPair, targetToProxyMap, autoForward, newForwarder}: XtalDecor) => ({
+        on, newTarget, newTargetProxyPair, targetToProxyMap, autoForward, newForwarder}: XtalDecor) => ({
         str: [upgrade, ifWantsToBe],
         bool: [autoForward],
         obj: [on, newTarget, init, targetToProxyMap, actions, newTargetProxyPair, newForwarder],

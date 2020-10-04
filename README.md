@@ -78,7 +78,7 @@ expandableProxy.expandAll = true;
 ## Setting properties via attribute [TODO]:
 
 ```html
-<list-sorter upgrade=details if-wants-to-be=sorted></list-sorter>
+<list-sorter upgrade=* if-wants-to-be=sorted></list-sorter>
 
 ...
 
@@ -127,6 +127,8 @@ You can then pass in new settings via the same be- attribute:
 </script>
 
 ```
+
+
 
 
 

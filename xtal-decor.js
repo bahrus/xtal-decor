@@ -71,13 +71,17 @@ export const linkNewTargetProxyPair = ({ actions, self, virtualProps, targetToPr
     };
     delete self.newTarget;
 };
-const initializeProxy = ({ newTargetProxyPair, init, self, on }) => {
+const initializeProxy = ({ newTargetProxyPair, init, self, on, ifWantsToBe }) => {
     if (newTargetProxyPair === undefined)
         return;
     const newProxy = newTargetProxyPair.proxy;
     newProxy.self = newProxy;
     const newTarget = newTargetProxyPair.target;
     init(newProxy);
+    const attr = newTarget.getAttribute('is-' + ifWantsToBe);
+    if (attr !== null && attr.length > 0) {
+        Object.assign(newProxy, JSON.parse(attr));
+    }
     for (var key in on) {
         const eventSetting = on[key];
         switch (typeof eventSetting) {
