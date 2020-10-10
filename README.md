@@ -1,5 +1,7 @@
 # xtal-decor
 
+[![Published on webcomponents.org](https://img.shields.io/badge/webcomponents.org-published-blue.svg)](https://www.webcomponents.org/element/xtal-decor)
+
 <a href="https://nodei.co/npm/xtal-decor/"><img src="https://nodei.co/npm/xtal-decor.png"></a>
 
 <img src="https://badgen.net/bundlephobia/minzip/xtal-decor">
