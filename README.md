@@ -189,7 +189,7 @@ upgrade({
 });
 ```
 
-The API by itself is much more open ended, as you will need to define what to do in your callback, entirely.  In other words, the api provides no built-in support for creating a proxy.
+The API by itself is much more open ended, as you will need to entirely define what to do in your callback.  In other words, the api provides no built-in support for creating a proxy.
 
 ## Viewing example from git clone or github fork:
 
