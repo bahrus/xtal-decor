@@ -84,6 +84,8 @@ For example:
 
 Since we don't want to pollute the native DOM element (or custom element) we are enhancing with properties it doesn't know about (which could become actual properties in the future), we need a way of passing properties directly to the proxy (which uses a WeakMap for the virtual properties so it should be future-safe.)
 
+For that, make use of the reserved tag-name "proxy-props".  You can pass properties to the proxy-props tag, and those properties will be auto-forwarded to the proxy.
+
 ```html
 <make-expandable upgrade=details if-wants-to-be=all-expandable auto-forward></make-expandable>
 <make-collapsible upgrade=details if-wants-to-be=all-collapsible auto-forward></make-collapsible>
@@ -107,7 +109,7 @@ expandableProxy.expandAll = true;
 
 ## Setting properties via attribute:
 
-Adding a tag for proxying properties is a bit clumsy.  A more elegant solution (perhaps) xtal-decor supports is to pass in properties via it's custom attriute:
+Adding a tag for auto-forwarding properties is a bit clumsy.  A more elegant solution, perhaps, which xtal-decor supports is to pass in properties via its custom attribute:
 
 ```html
 <list-sorter upgrade=* if-wants-to-be=sorted></list-sorter>
@@ -125,7 +127,7 @@ Adding a tag for proxying properties is a bit clumsy.  A more elegant solution (
 
 ```
 
-After performing global init based on the specified init property of list-sorter (if any), the attribute "be-sorted" switches to "is-sorted":
+After list-sorter does its thing, the attribute "be-sorted" switches to "is-sorted":
 
 ```html
 
