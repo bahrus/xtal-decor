@@ -10,7 +10,7 @@
 
 xtal-decor provides a base class which enables attaching ES6 proxies onto other "Shadow DOM peer citizens" -- native DOM or custom elements in the same Shadow DOM realm.
 
-xtal-decor provides a much more "conservative" alternative approach to enhancing existing DOM elements, in place of the controversial customized built-in element proposal.
+xtal-decor provides a much more "conservative" alternative approach to enhancing existing DOM elements, in place of the controversial customized built-in element [standard-ish](https://bkardell.com/blog/TheWalrus.html).
 
 Like [xtal-deco](https://github.com/bahrus/xtal-deco), properties "init", "on" and "actions" allow you to define the behavior of the ES6 proxy with a minimum of fuss.  And the property "virtualProps" is also supported, which allows you to define properties that aren't already part of the native DOM element or custom element you are enhancing.  Use of virtualProps is critical if you want to be guaranteed that your component doesn't break, should the native DOM element or custom element be enhanced with a new property with the same name.
 
