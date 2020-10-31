@@ -25,7 +25,7 @@ xtal-decor provides the base class and web component.  Like xtal-deco, we can "i
             }
         ],
         on: {
-            click: ({self}) => {
+            click: ({self}, event) => {
                 self.count++;
             }
         },
