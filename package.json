@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "trans-render": "0.0.267",
-    "xtal-element": "0.0.311",
+    "xtal-element": "0.0.312",
     "css-observe": "0.0.27"
   },
   "devDependencies": {
