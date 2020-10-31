@@ -20,13 +20,12 @@ xtal-decor provides the base class and web component.  Like xtal-deco, we can "i
 <xtal-decor upgrade=button if-wants-to-be=a-butterbeer-counter virtual-props='["count"]'><script nomodule=ish>
     const decoProps = {
         actions: [
-            ({count, self}) => {
+            ({count}) => {
                 window.alert(count + " butterbeers sold");
             }
         ],
         on: {
-            'click': ({self}) => {
-                //console.log(self);
+            click: ({self}) => {
                 self.count++;
             }
         },
@@ -192,6 +191,32 @@ upgrade({
 ```
 
 The API by itself is much more open ended, as you will need to entirely define what to do in your callback.  In other words, the api provides no built-in support for creating a proxy.
+
+## Prop Transfer [TODO]
+
+Being that there isn't built-in support for this alternative progressive enhancement approach, we need to improvise a little.
+
+For example, suppose we want to turn an ordinary hyperlink into a client-side routing link.
+
+```html
+<a be-a-navigation-link href="myAccounts/14394402/statements/201904?page=1" slot="link">Statement for April 2019</a>
+```
+
+The problem is until the supporting web component is loaded, the hyperlink above is an active hyperlink that will take you to another page.  Perhaps if your routing solution is robust, little harm will result in this case, other than reloading the page unnecessarily.  In other words, the fact that the hyperlink does something immediately, and without JavaScript, could in this case be considered a feature rather than a bug.
+
+But if we want to force the hyperlink to not do anything until the progressive enhancer has done its enhancing, replace the href attribute by a data- attribute corresponding to the internal property name, converted to lisp case:
+
+```html
+<a be-a-navigation-link data-href="myAccounts/14394402/statements/201904?page=1" slot="link">Statement for April 2019</a>
+```
+
+To instruct your decorator component to transfer the props, use "transfer-props" property:
+
+```html
+<navigate-trait upgrade=nav if-wants-to-be="a-client-side-router" transfer-props></navigate-trait>
+```
+
+transfer-props doesn't happen until all attributes starting with be- has been processed (replaced by is-).
 
 ## Viewing example from git clone or github fork:
 
