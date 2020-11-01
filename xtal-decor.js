@@ -5,8 +5,8 @@ export { define, mergeProps } from 'xtal-element/xtal-latx.js';
 export function hasUndefined(arr) {
     return arr.includes(undefined);
 }
-const linkUpgradeProxyPair = ({ upgrade, ifWantsToBe, self, on, init, actions }) => {
-    if (hasUndefined([upgrade, ifWantsToBe, self, on, init, actions]))
+const linkUpgradeProxyPair = ({ upgrade, ifWantsToBe, self, init, actions }) => {
+    if (hasUndefined([upgrade, ifWantsToBe, self, init, actions]))
         return;
     const callback = (target) => {
         self.newTarget = target;

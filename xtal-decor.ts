@@ -9,8 +9,8 @@ export function hasUndefined(arr: any[]){
     return arr.includes(undefined);
 }
 
-const linkUpgradeProxyPair = ({upgrade, ifWantsToBe, self, on, init, actions}: XtalDecor) => {
-    if(hasUndefined([upgrade, ifWantsToBe, self, on, init, actions])) return;
+const linkUpgradeProxyPair = ({upgrade, ifWantsToBe, self, init, actions}: XtalDecor) => {
+    if(hasUndefined([upgrade, ifWantsToBe, self, init, actions])) return;
     const callback = (target: HTMLElement) => {
         self.newTarget = target;
     }
