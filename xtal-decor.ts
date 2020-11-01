@@ -80,7 +80,7 @@ export const linkNewTargetProxyPair = ({actions, self, virtualProps, targetToPro
     delete self.newTarget;
 }
 
-const initializeProxy = ({newTargetProxyPair, init, self, on, ifWantsToBe}: XtalDecor) => {
+const initializeProxy = ({newTargetProxyPair, init, self, on, capture, ifWantsToBe}: XtalDecor) => {
     if(newTargetProxyPair === undefined) return;
     const newProxy = newTargetProxyPair.proxy;
     (<any>newProxy).self = newProxy;
@@ -90,19 +90,26 @@ const initializeProxy = ({newTargetProxyPair, init, self, on, ifWantsToBe}: Xtal
     if(attr !== null && attr.length > 0){
         Object.assign(newProxy, JSON.parse(attr));
     }
+    addEvents(on, newTarget, newProxy, false);
+    addEvents(capture, newTarget, newProxy, true);
+    delete self.newTargetProxyPair;
+}
+
+function addEvents(on: EventSettings, target: HTMLElement, proxy: HTMLElement, capture: boolean){
+    if(on === undefined) return;
     for(var key in on){
         const eventSetting = on[key];
         switch(typeof eventSetting){
             case 'function':
-                newTarget.addEventListener(key, e => {
-                    eventSetting(newProxy, e);
-                });
+                target.addEventListener(key, e => {
+                    eventSetting(proxy, e);
+                }, capture);
                 break;
             default:
+                //TODO:
                 throw 'not implemented yet';
         }
-    }    
-    delete self.newTargetProxyPair;
+    }  
 }
 
 const linkForwarder = ({autoForward, ifWantsToBe, self}: XtalDecor) => {
@@ -168,10 +175,10 @@ export class XtalDecor<TTargetElement extends Element = HTMLElement> extends Xta
     static is = 'xtal-decor';
 
     static attributeProps = ({upgrade, ifWantsToBe, init, actions, 
-        on, newTarget, newTargetProxyPair, targetToProxyMap, autoForward, newForwarder}: XtalDecor) => ({
+        on, capture, newTarget, newTargetProxyPair, targetToProxyMap, autoForward, newForwarder}: XtalDecor) => ({
         str: [upgrade, ifWantsToBe],
         bool: [autoForward],
-        obj: [on, newTarget, init, targetToProxyMap, actions, newTargetProxyPair, newForwarder],
+        obj: [on, newTarget, init, targetToProxyMap, actions, newTargetProxyPair, newForwarder, capture],
         reflect: [upgrade, ifWantsToBe]
     } as AttributeProps);
 
@@ -184,6 +191,8 @@ export class XtalDecor<TTargetElement extends Element = HTMLElement> extends Xta
     actions: PropAction<any>[] | undefined;
 
     on: EventSettings | undefined;
+
+    capture: EventSettings | undefined;
 
     propActions = propActions;
 

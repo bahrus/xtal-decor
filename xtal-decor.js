@@ -79,7 +79,7 @@ export const linkNewTargetProxyPair = ({ actions, self, virtualProps, targetToPr
     };
     delete self.newTarget;
 };
-const initializeProxy = ({ newTargetProxyPair, init, self, on, ifWantsToBe }) => {
+const initializeProxy = ({ newTargetProxyPair, init, self, on, capture, ifWantsToBe }) => {
     if (newTargetProxyPair === undefined)
         return;
     const newProxy = newTargetProxyPair.proxy;
@@ -90,20 +90,27 @@ const initializeProxy = ({ newTargetProxyPair, init, self, on, ifWantsToBe }) =>
     if (attr !== null && attr.length > 0) {
         Object.assign(newProxy, JSON.parse(attr));
     }
+    addEvents(on, newTarget, newProxy, false);
+    addEvents(capture, newTarget, newProxy, true);
+    delete self.newTargetProxyPair;
+};
+function addEvents(on, target, proxy, capture) {
+    if (on === undefined)
+        return;
     for (var key in on) {
         const eventSetting = on[key];
         switch (typeof eventSetting) {
             case 'function':
-                newTarget.addEventListener(key, e => {
-                    eventSetting(newProxy, e);
-                });
+                target.addEventListener(key, e => {
+                    eventSetting(proxy, e);
+                }, capture);
                 break;
             default:
+                //TODO:
                 throw 'not implemented yet';
         }
     }
-    delete self.newTargetProxyPair;
-};
+}
 const linkForwarder = ({ autoForward, ifWantsToBe, self }) => {
     if (!autoForward)
         return;
@@ -173,10 +180,10 @@ export class XtalDecor extends XtallatX(hydrate(HTMLElement)) {
     }
 }
 XtalDecor.is = 'xtal-decor';
-XtalDecor.attributeProps = ({ upgrade, ifWantsToBe, init, actions, on, newTarget, newTargetProxyPair, targetToProxyMap, autoForward, newForwarder }) => ({
+XtalDecor.attributeProps = ({ upgrade, ifWantsToBe, init, actions, on, capture, newTarget, newTargetProxyPair, targetToProxyMap, autoForward, newForwarder }) => ({
     str: [upgrade, ifWantsToBe],
     bool: [autoForward],
-    obj: [on, newTarget, init, targetToProxyMap, actions, newTargetProxyPair, newForwarder],
+    obj: [on, newTarget, init, targetToProxyMap, actions, newTargetProxyPair, newForwarder, capture],
     reflect: [upgrade, ifWantsToBe]
 });
 define(XtalDecor);
