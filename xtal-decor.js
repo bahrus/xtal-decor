@@ -1,6 +1,6 @@
 import { XtallatX, define, deconstruct, camelToLisp } from 'xtal-element/xtal-latx.js';
 import { hydrate } from 'trans-render/hydrate.js';
-import { upgrade as upgr } from './upgrade.js';
+import { upgrade as upgr, getAttrInfo } from './upgrade.js';
 export { define, mergeProps } from 'xtal-element/xtal-latx.js';
 export function hasUndefined(arr) {
     return arr.includes(undefined);
@@ -22,9 +22,9 @@ export const linkNewTargetProxyPair = ({ actions, self, virtualProps, targetToPr
         return;
     const existingProxy = targetToProxyMap.get(newTarget);
     if (existingProxy) {
-        const attr = newTarget.getAttribute('is-' + ifWantsToBe);
+        const attr = getAttrInfo(newTarget, ifWantsToBe, true);
         if (attr !== null && attr.length > 0) {
-            Object.assign(existingProxy, JSON.parse(attr));
+            Object.assign(existingProxy, JSON.parse(attr[0]));
         }
         return;
     }
@@ -86,9 +86,9 @@ const initializeProxy = ({ newTargetProxyPair, init, self, on, capture, ifWantsT
     newProxy.self = newProxy;
     const newTarget = newTargetProxyPair.target;
     init(newProxy);
-    const attr = newTarget.getAttribute('is-' + ifWantsToBe);
+    const attr = getAttrInfo(newTarget, ifWantsToBe, true);
     if (attr !== null && attr.length > 0) {
-        Object.assign(newProxy, JSON.parse(attr));
+        Object.assign(newProxy, JSON.parse(attr[0]));
     }
     addEvents(on, newTarget, newProxy, false);
     addEvents(capture, newTarget, newProxy, true);

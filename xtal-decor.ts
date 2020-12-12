@@ -1,6 +1,6 @@
 import { XtallatX, define, AttributeProps, PropAction, deconstruct, EventSettings, camelToLisp } from 'xtal-element/xtal-latx.js';
 import { hydrate } from 'trans-render/hydrate.js';
-import { upgrade as upgr } from './upgrade.js';
+import { upgrade as upgr, getAttrInfo} from './upgrade.js';
 import { TargetProxyPair } from './types.d.js';
 export {define, AttributeProps, PropAction, EventSettings, mergeProps } from 'xtal-element/xtal-latx.js';
 export {SelfReferentialHTMLElement} from './types.d.js';
@@ -21,13 +21,14 @@ const linkUpgradeProxyPair = ({upgrade, ifWantsToBe, self, init, actions}: XtalD
     }, callback);
 }
 
+
 export const linkNewTargetProxyPair = ({actions, self, virtualProps, targetToProxyMap, newTarget, ifWantsToBe}: XtalDecor) => {
     if(newTarget === undefined) return;
     const existingProxy = targetToProxyMap.get(newTarget);
     if(existingProxy){
-        const attr = newTarget.getAttribute('is-' + ifWantsToBe);
+        const attr = getAttrInfo(newTarget, ifWantsToBe, true);
         if(attr !== null && attr.length > 0){
-            Object.assign(existingProxy, JSON.parse(attr));
+            Object.assign(existingProxy, JSON.parse(attr[0]));
         }
         return;
     }
@@ -86,9 +87,9 @@ const initializeProxy = ({newTargetProxyPair, init, self, on, capture, ifWantsTo
     (<any>newProxy).self = newProxy;
     const newTarget = newTargetProxyPair.target;
     init(newProxy);
-    const attr = newTarget.getAttribute('is-' + ifWantsToBe);
+    const attr = getAttrInfo(newTarget, ifWantsToBe, true);
     if(attr !== null && attr.length > 0){
-        Object.assign(newProxy, JSON.parse(attr));
+        Object.assign(newProxy, JSON.parse(attr[0]));
     }
     addEvents(on, newTarget, newProxy, false);
     addEvents(capture, newTarget, newProxy, true);
@@ -161,11 +162,7 @@ const doAutoForward = ({newForwarder, upgrade, ifWantsToBe, initializedSym, targ
             }
             return true;
         },
-        // get: (target, key) => {
-        //     const el = getNextSibling(target, `${upgrade}[is-${ifWantsToBe}]`);
-        //     if(el === undefined) return undefined;
 
-        // }
     });
 };
 

@@ -30,14 +30,14 @@
             Object.assign(selfish.parentElement, decoProps);
         </script></xtal-decor>
 
-        <button id=butterBeerCounter be-a-butterbeer-counter='{"count": 1000}' disabled data-drink-selection="Butterbeer">Click me to Order Your Drink</button>
+        <button id=butterBeerCounter data-be-a-butterbeer-counter='{"count": 1000}' disabled data-drink-selection="Butterbeer">Click me to Order Your Drink</button>
         <p-d on="count-changed" prop=textContent val=target.count></p-d>
         <span></span> drinks sold.
 
         <button onclick="setCount()">Set count to 2000</button>
         <script>
             function setCount(){
-                butterBeerCounter.setAttribute('be-a-butterbeer-counter', '{"count": 2000}');
+                butterBeerCounter.setAttribute('data-be-a-butterbeer-counter', '{"count": 2000}');
             }
         </script>
         <script defer src="https://cdn.jsdelivr.net/npm/es-module-shims@0.2.7/dist/es-module-shims.js"></script>

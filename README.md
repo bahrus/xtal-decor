@@ -192,6 +192,27 @@ upgrade({
 
 The API by itself is much more open ended, as you will need to entirely define what to do in your callback.  In other words, the api provides no built-in support for creating a proxy.
 
+## For the sticklers
+
+If you are concerned about using attributes that are prefixed with the non standard be-, use data-be instead:
+
+
+```html
+<list-sorter upgrade=* if-wants-to-be=sorted></list-sorter>
+
+...
+
+<ul data-be-sorted='{"direction":"asc","nodeSelectorToSortOn":"span"}'>
+    <li>
+        <span>Zorse</span>
+    </li>
+    <li>
+        <span>Aardvark</span>
+    </li>
+</ul>
+
+```
+
 
 ## Viewing example from git clone or github fork:
 
