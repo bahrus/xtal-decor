@@ -81,7 +81,7 @@ For example:
 
 
 
-## Property Forwarding:
+## Property Forwarding with a light touch:
 
 Since we don't want to pollute the native DOM element (or custom element) we are enhancing with properties it doesn't know about (which could become actual properties in the future), we need a way of passing properties directly to the proxy (which uses a WeakMap for the virtual properties so it should be future-safe.)
 
@@ -163,6 +163,10 @@ You cannot pass in new values by using the is-sorted attribute.  Instead, you ne
 </script>
 
 ```
+
+## Proxy forwarding with a heavier touch [TODO]
+
+xtal-decor also supports interjecting post-prop setting of specified props of the target element. 
 
 ## API
 
