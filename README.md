@@ -166,7 +166,7 @@ You cannot pass in new values by using the is-sorted attribute.  Instead, you ne
 
 ## Proxy forwarding with a heavier touch [TODO]
 
-xtal-decor also supports interjecting post-prop setting of specified props of the target element. 
+xtal-decor also supports interjecting post-prop setting of specified props of the target element. This feature should be used sparingly, as it could have a performance impact.
 
 ## API
 
