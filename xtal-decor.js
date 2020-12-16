@@ -23,7 +23,7 @@ export const linkNewTargetProxyPair = ({ actions, self, virtualProps, targetToPr
     const existingProxy = targetToProxyMap.get(newTarget);
     if (existingProxy) {
         const attr = getAttrInfo(newTarget, ifWantsToBe, true);
-        if (attr !== null && attr.length > 0) {
+        if (attr !== null && attr.length > 0 && attr[0].length > 0) {
             Object.assign(existingProxy, JSON.parse(attr[0]));
         }
         return;
