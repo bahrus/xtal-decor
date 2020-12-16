@@ -87,7 +87,7 @@ const initializeProxy = ({ newTargetProxyPair, init, self, on, capture, ifWantsT
     const newTarget = newTargetProxyPair.target;
     init(newProxy);
     const attr = getAttrInfo(newTarget, ifWantsToBe, true);
-    if (attr !== null && attr.length > 0) {
+    if (attr !== null && attr.length > 0 && attr[0].length > 0) {
         Object.assign(newProxy, JSON.parse(attr[0]));
     }
     addEvents(on, newTarget, newProxy, false);
