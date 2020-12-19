@@ -8,6 +8,10 @@ function monitor(id, beAttrib, args, callback) {
     addCSSListener(id, args.shadowDomPeer, `${args.upgrade}[${beAttrib}],${args.upgrade}[data-${beAttrib}]`, (e) => {
         const target = e.target;
         const val = getAttrInfo(target, args.ifWantsToBe, false);
+        if (val === null) {
+            console.warn("Mismatch found.");
+            return;
+        }
         target.setAttribute(`${val[1]}is-${args.ifWantsToBe}`, val[0]);
         target.removeAttribute(`${val[1]}be-${args.ifWantsToBe}`);
         if (callback !== undefined)

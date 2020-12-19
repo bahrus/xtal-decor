@@ -11,6 +11,10 @@ function monitor<T extends EventTarget>(id: string, beAttrib: string, args: Upgr
     addCSSListener(id, args.shadowDomPeer, `${args.upgrade}[${beAttrib}],${args.upgrade}[data-${beAttrib}]`, (e: Event) => {
         const target = e.target;
         const val = getAttrInfo(target as Element, args.ifWantsToBe, false);
+        if(val === null) {
+            console.warn("Mismatch found.");
+            return;
+        }
         (target as Element).setAttribute(`${val[1]}is-${args.ifWantsToBe}`, val[0]);
         (target as Element).removeAttribute(`${val[1]}be-${args.ifWantsToBe}`);
         if(callback !== undefined) callback(target as T);
