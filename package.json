@@ -1,6 +1,6 @@
 {
   "name": "xtal-decor",
-  "version": "0.0.22",
+  "version": "0.0.23",
   "description": "Enables attaching ES6 proxies onto other Shadow DOM peer citizens",
   "main": "xtal-decor.js",
   "module": "xtal-decor.js",
