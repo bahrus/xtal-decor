@@ -177,13 +177,16 @@ const obj1: PropDef = {
     type: Object,
     dry: true
 };
+const obj2: PropDef = {
+    type: Object,
+};
 export const propDefMap: PropDefMap<XtalDecor> = {
     upgrade: str1, ifWantsToBe: str1,
     autoForward:{
         type: Boolean,
         dry: true,
     },
-    on: obj1, newTarget: obj1, init: obj1, targetToProxyMap: obj1, actions: obj1, newTargetProxyPair: obj1, newForwarder: obj1, capture: obj1,
+    on: obj1, newTarget: obj2, init: obj1, targetToProxyMap: obj1, actions: obj1, newTargetProxyPair: obj1, newForwarder: obj1, capture: obj1,
 };
 const slicedPropDefs = xc.getSlicedPropDefs(propDefMap);
 export class XtalDecor<TTargetElement extends Element = HTMLElement> extends HTMLElement{
