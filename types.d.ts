@@ -8,7 +8,7 @@ export interface UpgradeArg<T extends Object>{
      */
     upgrade: string,
     /**
-     * Monitor for attributes that start with imma-be-[ifWantsToBe]
+     * Monitor for attributes that start with be-[ifWantsToBe]
      */
     ifWantsToBe: string,
 }
