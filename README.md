@@ -164,15 +164,6 @@ You cannot pass in new values by using the is-sorted attribute.  Instead, you ne
 
 ```
 
-## Native or Third-party public prop subscriptions [TODO]
-
-xtal-decor also supports listening for prop changes of specified, "native" props of the target element, even if the prop changes are not made via the proxy. This feature should be used sparingly, as it could have a performance impact.
-
-
-
-```html
-<xtal-decor upgrade=iframe prop-subscriptions='["src"]'></xtal-decor>
-```
 
 ## API
 
