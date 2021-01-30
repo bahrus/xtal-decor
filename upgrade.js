@@ -1,4 +1,4 @@
-import { addCSSListener } from 'xtal-element/observeCssSelector.js';
+import { addCSSListener } from 'xtal-element/lib/observeCssSelector.js';
 export function upgrade(args, callback) {
     const beAttrib = `be-${args.ifWantsToBe}`;
     const id = 'a' + (new Date()).valueOf().toString();

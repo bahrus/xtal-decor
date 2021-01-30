@@ -1,4 +1,4 @@
-import {addCSSListener} from 'xtal-element/observeCssSelector.js';
+import { addCSSListener } from 'xtal-element/lib/observeCssSelector.js';
 import { UpgradeArg } from './types.d.js';
 
 export function upgrade<T extends EventTarget>(args: UpgradeArg<T>, callback?: (t: T) => void){

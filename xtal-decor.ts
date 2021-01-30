@@ -1,9 +1,10 @@
-import { XtallatX, define, AttributeProps, PropAction, deconstruct, EventSettings, camelToLisp } from 'xtal-element/xtal-latx.js';
-import { hydrate } from 'trans-render/hydrate.js';
 import { upgrade as upgr, getAttrInfo} from './upgrade.js';
 import { TargetProxyPair } from './types.d.js';
-export {define, AttributeProps, PropAction, EventSettings, mergeProps } from 'xtal-element/xtal-latx.js';
-export {SelfReferentialHTMLElement} from './types.d.js';
+export { SelfReferentialHTMLElement } from './types.d.js';
+import { xc,PropAction,PropDef,PropDefMap,ReactiveSurface } from 'xtal-element/lib/XtalCore.js';
+import { EventSettings } from 'xtal-element/types.d.js';
+import { getDestructArgs } from 'xtal-element/lib/getDestructArgs.js';
+import { camelToLisp } from 'trans-render/lib/camelToLisp.js';
 
 export function hasUndefined(arr: any[]){
     return arr.includes(undefined);
@@ -42,7 +43,7 @@ export const linkNewTargetProxyPair = ({actions, self, virtualProps, targetToPro
             }
             if(key === 'self') return true;
             actions.forEach(action =>{
-                const dependencies = deconstruct(action);
+                const dependencies = getDestructArgs(action);
                 if(dependencies.includes(key as string)){
                     //TODO:  symbols
                     const arg = Object.assign({}, virtualPropHolder, target);
@@ -167,17 +168,31 @@ const doAutoForward = ({newForwarder, upgrade, ifWantsToBe, initializedSym, targ
 };
 
 export const propActions = [linkUpgradeProxyPair, linkNewTargetProxyPair, initializeProxy, linkForwarder, doAutoForward] as PropAction<any>[];
-
-export class XtalDecor<TTargetElement extends Element = HTMLElement> extends XtallatX(hydrate(HTMLElement)){
+const str1: PropDef = {
+    type: String,
+    dry: true,
+    reflect: true,
+};
+const obj1: PropDef = {
+    type: Object,
+    dry: true
+};
+export const propDefMap: PropDefMap<XtalDecor> = {
+    upgrade: str1, ifWantsToBe: str1,
+    autoForward:{
+        type: Boolean,
+        dry: true,
+    },
+    on: obj1, newTarget: obj1, init: obj1, targetToProxyMap: obj1, actions: obj1, newTargetProxyPair: obj1, newForwarder: obj1, capture: obj1,
+};
+const slicedPropDefs = xc.getSlicedPropDefs(propDefMap);
+export class XtalDecor<TTargetElement extends Element = HTMLElement> extends HTMLElement{
     static is = 'xtal-decor';
+    self = this;
+    propActions = propActions;
+    reactor = new xc.Reactor(this);
 
-    static attributeProps = ({upgrade, ifWantsToBe, init, actions, 
-        on, capture, newTarget, newTargetProxyPair, targetToProxyMap, autoForward, newForwarder}: XtalDecor) => ({
-        str: [upgrade, ifWantsToBe],
-        bool: [autoForward],
-        obj: [on, newTarget, init, targetToProxyMap, actions, newTargetProxyPair, newForwarder, capture],
-        reflect: [upgrade, ifWantsToBe]
-    } as AttributeProps);
+
 
     upgrade: string | undefined;
 
@@ -190,8 +205,6 @@ export class XtalDecor<TTargetElement extends Element = HTMLElement> extends Xta
     on: EventSettings | undefined;
 
     capture: EventSettings | undefined;
-
-    propActions = propActions;
 
     newTarget: TTargetElement;
 
@@ -212,9 +225,13 @@ export class XtalDecor<TTargetElement extends Element = HTMLElement> extends Xta
 
     connectedCallback(){
         this.style.display = 'none';
-        super.connectedCallback();
+        xc.hydrate(this, slicedPropDefs);
+    }
+    onPropChange(n: string, propDef: PropDef, newVal: any){
+        this.reactor.addToQueue(propDef, newVal);
     }
 
 }
 
-define(XtalDecor);
+xc.letThereBeProps(XtalDecor, slicedPropDefs.propDefs, 'onPropChange');
+xc.define(XtalDecor);

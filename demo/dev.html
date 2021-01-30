@@ -31,8 +31,8 @@
         </script></xtal-decor>
 
         <button id=butterBeerCounter be-a-butterbeer-counter='{"count": 1000}' disabled data-drink-selection="Butterbeer">Click me to Order Your Drink</button>
-        <p-d on="count-changed" prop=textContent val=target.count></p-d>
-        <span></span> drinks sold.
+        <on-to-me on="count-changed" to=[-text-content] val=target.count></p-d>
+        <span -text-content></span> drinks sold.
 
         <button onclick="setCount()">Set count to 2000</button>
         <script>
@@ -40,13 +40,13 @@
                 butterBeerCounter.setAttribute('be-a-butterbeer-counter', '{"count": 2000}');
             }
         </script>
-        <script defer src="https://cdn.jsdelivr.net/npm/es-module-shims@0.2.7/dist/es-module-shims.js"></script>
+        <script defer src="../node_modules/es-module-shims/dist/es-module-shims.js"></script>
         <script type="importmap-shim">
         {
             "imports": {
                 "xtal-element/": "../node_modules/xtal-element/",
                 "trans-render/": "../node_modules/trans-render/",
-                "p-et-alia/": "../node_modules/p-et-alia/",
+                "on-to-me/": "../node_modules/on-to-me/",
                 "nomodule/": "../node_modules/nomodule/",
                 "css-observe/": "../node_modules/css-observe/"
             }
@@ -54,7 +54,7 @@
         </script>
         <script type="module-shim">
             import '../xtal-decor.js';
-            import 'p-et-alia/p-d.js';
+            import 'on-to-me/on-to-me.js';
             import 'nomodule/no-module.js';
         </script>
     </div>
