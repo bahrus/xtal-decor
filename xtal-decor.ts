@@ -193,7 +193,7 @@ export class XtalDecor<TTargetElement extends Element = HTMLElement> extends HTM
     static is = 'xtal-decor';
     self = this;
     propActions = propActions;
-    reactor = new xc.Reactor(this);
+    reactor = new xc.Rx(this);
 
 
 
@@ -236,5 +236,5 @@ export class XtalDecor<TTargetElement extends Element = HTMLElement> extends HTM
 
 }
 
-xc.letThereBeProps(XtalDecor, slicedPropDefs.propDefs, 'onPropChange');
+xc.letThereBeProps<XtalDecor>(XtalDecor, slicedPropDefs.propDefs, 'onPropChange');
 xc.define(XtalDecor);

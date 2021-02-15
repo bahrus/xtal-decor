@@ -193,7 +193,7 @@ export class XtalDecor extends HTMLElement {
         super(...arguments);
         this.self = this;
         this.propActions = propActions;
-        this.reactor = new xc.Reactor(this);
+        this.reactor = new xc.Rx(this);
         this.targetToProxyMap = new WeakMap();
         this.initializedSym = Symbol();
     }
