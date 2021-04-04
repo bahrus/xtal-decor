@@ -36,7 +36,7 @@ xtal-decor provides the base class and web component.  Like xtal-deco, we can "i
     Object.assign(selfish.parentElement, decoProps);
 </script></xtal-decor>
 
-<button id=butterBeerCounter be-a-butterbeer-counter='{"count": 1000}' disabled data-drink-selection="Butterbeer">Click me to Order Your Drink</button>
+<button id=butterBeerCounter be-a-butterbeer-counter='{"count": 1000}' disabled>Click me to Order Your Drink</button>
 <p-d on="count-changed" prop=textContent val=target.count></p-d>
 <span></span> drinks sold.
 
@@ -58,28 +58,28 @@ For example:
 
 ```html
 #shadow-root (open)
-    <xtal-decor-foo upgrade=blacked-eyed-peas if-wants-to-be=on-the-next-level></xtal-decor-foo>
-    <xtal-decor-bar upgrade=black-eyed-peas if-wants-to-be=rocking-over-that-bass-tremble></xtal-decor-bar>
-    <xtal-decor-baz upgrade=blacked-eyed-peas if-wants-to-be=chilling-with-my-motherfuckin-crew></xtal-decor-baz>
+    <be-on-the-next-level upgrade=blacked-eyed-peas if-wants-to-be=on-the-next-level></be-on-the-next-level>
+    <be-rocking-over-that-bass-tremble upgrade=black-eyed-peas if-wants-to-be=rocking-over-that-bass-tremble></be-rocking-over-that-bass-tremble>
+    <be-chilling-with-my-motherfuckin-crew upgrade=blacked-eyed-peas if-wants-to-be=chilling-with-my-motherfuckin-crew></be-chilling-with-my-motherfuckin-crew>
     ...
 
 
 
     <black-eyed-peas 
-        be-on-the-next-level="level 11" 
+        be-on-the-next-level='{"level":"level 11"}' 
         be-rocking-over-that-bass-tremble
         be-chilling-with-my-motherfuckin-crew
     ></black-eyed-peas>
 
     <!-- Becomes, after upgrading -->
     <black-eyed-peas 
-        is-on-the-next-level="level 11"
+        is-on-the-next-level='{"level":"level 11"}'
         is-rocking-over-that-bass-tremble
         is-chilling-with-my-motherfuckin-crew
     ></black-eyed-peas>
 ```
 
-
+<!--
 
 ## Property Forwarding with a light touch:
 
@@ -108,9 +108,35 @@ expandableProxy.expandAll = true;
 </script>
 ```
 
+-->
+
+## Setting properties of the proxy externally
+
+The tricky thing about proxies is they're great if you have access to them, useless if you don't.
+
+If we need to modify a property of a proxy, we can do that via the xtal-decor element, or the element extending xtal-decor:
+
+```html
+<xtal-decor id=decor upgrade=button if-wants-to-be=a-butterbeer-counter virtual-props='["count"]'>
+    ...
+</xtal-decor>
+<button id=butterBeerCounter be-a-butterbeer-counter='{"count": 1000}' disabled>Click me to Order Your Drink</button>
+...
+<script>
+    function setCount(newCount){
+        if(decor.targetToProxyMap === undefined || !decor.targetToProxyMap.has(butterBeerCounter)){
+            setTimeout(() => setCount(newCount), 50);
+            return;
+        }
+        const proxy = decor.targetToProxyMap.get(butterBeerCounter);
+        proxy.count = newCount;
+    }
+</script>
+```
+
 ## Setting properties via attribute:
 
-Adding a tag for auto-forwarding properties is a bit clumsy.  A more elegant solution, perhaps, which xtal-decor supports is to pass in properties via its custom attribute:
+A more elegant solution, perhaps, which xtal-decor supports, is to pass in properties via its custom attribute:
 
 ```html
 <list-sorter upgrade=* if-wants-to-be=sorted></list-sorter>

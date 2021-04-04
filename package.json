@@ -13,16 +13,15 @@
     "url": "git+https://github.com/bahrus/xtal-decor.git"
   },
   "dependencies": {
-    "css-observe": "0.0.37",
-    "trans-render": "0.0.276",
-    "xtal-element": "0.0.347"
+    "css-observe": "0.0.39",
+    "trans-render": "0.0.283",
+    "xtal-element": "0.0.373"
   },
   "devDependencies": {
     "es-dev-server": "2.1.0",
-    "es-module-shims": "0.9.0",
-    "nomodule": "0.0.8",
-    "on-to-me": "0.0.6",
-    "xtal-test": "0.0.48"
+    "nomodule": "0.0.10",
+    "on-to-me": "0.0.17",
+    "xtal-test": "0.0.50"
   },
   "author": "anderson.bruce.b@gmail.com",
   "license": "MIT",

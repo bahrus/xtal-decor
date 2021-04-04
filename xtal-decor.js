@@ -111,62 +111,20 @@ function addEvents(on, target, proxy, capture) {
         }
     }
 }
-const linkForwarder = ({ autoForward, ifWantsToBe, self }) => {
-    if (!autoForward)
-        return;
-    import('css-observe/css-observe.js');
-    const observer = document.createElement('css-observe');
-    observer.observe = true;
-    observer.selector = `proxy-props[for="${ifWantsToBe}"]`;
-    observer.addEventListener('latest-match-changed', e => {
-        self.newForwarder = observer.latestMatch;
-    });
-    self.appendChild(observer);
-};
-//https://gomakethings.com/finding-the-next-and-previous-sibling-elements-that-match-a-selector-with-vanilla-js/
-function getNextSibling(elem, selector) {
-    // Get the next sibling element
-    var sibling = elem.nextElementSibling;
-    if (selector === undefined)
-        return sibling;
-    // If the sibling matches our selector, use it
-    // If not, jump to the next sibling and continue the loop
-    while (sibling) {
-        if (sibling.matches(selector))
-            return sibling;
-        sibling = sibling.nextElementSibling;
-    }
-    return sibling;
-}
-;
-const doAutoForward = ({ newForwarder, upgrade, ifWantsToBe, initializedSym, targetToProxyMap }) => {
-    if (newForwarder === undefined)
-        return;
-    const proxy = new Proxy(newForwarder, {
-        set: (target, key, value) => {
-            target[key] = value;
-            const el = getNextSibling(target, `${upgrade}[is-${ifWantsToBe}]`);
-            if (el === undefined)
-                return true;
-            const proxy = targetToProxyMap.get(el);
-            if (proxy === undefined)
-                return true;
-            if (el[initializedSym] === undefined) {
-                const props = {};
-                Object.getOwnPropertyNames(target).forEach(targetKey => {
-                    props[targetKey] = target[targetKey];
-                });
-                Object.assign(proxy, props);
-                el[initializedSym] = true;
-            }
-            else {
-                proxy[key] = value;
-            }
-            return true;
-        },
-    });
-};
-export const propActions = [linkUpgradeProxyPair, linkNewTargetProxyPair, initializeProxy, linkForwarder, doAutoForward];
+// //https://gomakethings.com/finding-the-next-and-previous-sibling-elements-that-match-a-selector-with-vanilla-js/
+// function getNextSibling (elem: Element, selector: string | undefined) {
+// 	// Get the next sibling element
+//     var sibling = elem.nextElementSibling;
+//     if(selector === undefined) return sibling;
+// 	// If the sibling matches our selector, use it
+// 	// If not, jump to the next sibling and continue the loop
+// 	while (sibling) {
+// 		if (sibling.matches(selector)) return sibling;
+// 		sibling = sibling.nextElementSibling
+// 	}
+//     return sibling;
+// };
+export const propActions = [linkUpgradeProxyPair, linkNewTargetProxyPair, initializeProxy];
 const str1 = {
     type: String,
     dry: true,
@@ -181,10 +139,6 @@ const obj2 = {
 };
 export const propDefMap = {
     upgrade: str1, ifWantsToBe: str1,
-    autoForward: {
-        type: Boolean,
-        dry: true,
-    },
     on: obj1, newTarget: obj2, init: obj1, targetToProxyMap: obj1, actions: obj1, newTargetProxyPair: obj1, newForwarder: obj1, capture: obj1,
 };
 const slicedPropDefs = xc.getSlicedPropDefs(propDefMap);
@@ -206,5 +160,5 @@ export class XtalDecor extends HTMLElement {
     }
 }
 XtalDecor.is = 'xtal-decor';
-xc.letThereBeProps(XtalDecor, slicedPropDefs.propDefs, 'onPropChange');
+xc.letThereBeProps(XtalDecor, slicedPropDefs, 'onPropChange');
 xc.define(XtalDecor);

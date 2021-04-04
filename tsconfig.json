@@ -7,6 +7,9 @@
 		"newLine": "LF",
 		"watch": true
 	},
+	"files":[
+		"xtal-decor.ts",
+	],
 	"exclude":[
 		"build",
 		"bower_components",

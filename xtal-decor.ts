@@ -114,60 +114,27 @@ function addEvents(on: EventSettings, target: HTMLElement, proxy: HTMLElement, c
     }  
 }
 
-const linkForwarder = ({autoForward, ifWantsToBe, self}: XtalDecor) => {
-    if(!autoForward) return;
-    import('css-observe/css-observe.js');
-    const observer = document.createElement('css-observe') as any;
-    observer.observe = true;
-    observer.selector = `proxy-props[for="${ifWantsToBe}"]`;
-    observer.addEventListener('latest-match-changed', e => {
-        self.newForwarder = observer.latestMatch;
-    });
-    self.appendChild(observer);
-}
 
-//https://gomakethings.com/finding-the-next-and-previous-sibling-elements-that-match-a-selector-with-vanilla-js/
-function getNextSibling (elem: Element, selector: string | undefined) {
 
-	// Get the next sibling element
-    var sibling = elem.nextElementSibling;
-    if(selector === undefined) return sibling;
+// //https://gomakethings.com/finding-the-next-and-previous-sibling-elements-that-match-a-selector-with-vanilla-js/
+// function getNextSibling (elem: Element, selector: string | undefined) {
 
-	// If the sibling matches our selector, use it
-	// If not, jump to the next sibling and continue the loop
-	while (sibling) {
-		if (sibling.matches(selector)) return sibling;
-		sibling = sibling.nextElementSibling
-	}
-    return sibling;
-};
+// 	// Get the next sibling element
+//     var sibling = elem.nextElementSibling;
+//     if(selector === undefined) return sibling;
 
-const doAutoForward = ({newForwarder, upgrade, ifWantsToBe, initializedSym, targetToProxyMap}: XtalDecor) => {
-    if(newForwarder === undefined) return;
-    const proxy = new Proxy(newForwarder, {
-        set: (target, key, value) => {
-            target[key] = value;
-            const el = getNextSibling(target, `${upgrade}[is-${ifWantsToBe}]`);
-            if(el === undefined) return true;
-            const proxy = targetToProxyMap.get(el);
-            if(proxy === undefined) return true;
-            if(el[initializedSym] === undefined){
-                const props: any = {};
-                Object.getOwnPropertyNames(target).forEach(targetKey => {
-                    props[targetKey] = target[targetKey];
-                });
-                Object.assign(proxy, props);
-                el[initializedSym] = true;
-            }else{
-                proxy[key] = value;
-            }
-            return true;
-        },
+// 	// If the sibling matches our selector, use it
+// 	// If not, jump to the next sibling and continue the loop
+// 	while (sibling) {
+// 		if (sibling.matches(selector)) return sibling;
+// 		sibling = sibling.nextElementSibling
+// 	}
+//     return sibling;
+// };
 
-    });
-};
 
-export const propActions = [linkUpgradeProxyPair, linkNewTargetProxyPair, initializeProxy, linkForwarder, doAutoForward] as PropAction<any>[];
+
+export const propActions = [linkUpgradeProxyPair, linkNewTargetProxyPair, initializeProxy] as PropAction<any>[];
 const str1: PropDef = {
     type: String,
     dry: true,
@@ -182,10 +149,6 @@ const obj2: PropDef = {
 };
 export const propDefMap: PropDefMap<XtalDecor> = {
     upgrade: str1, ifWantsToBe: str1,
-    autoForward:{
-        type: Boolean,
-        dry: true,
-    },
     on: obj1, newTarget: obj2, init: obj1, targetToProxyMap: obj1, actions: obj1, newTargetProxyPair: obj1, newForwarder: obj1, capture: obj1,
 };
 const slicedPropDefs = xc.getSlicedPropDefs(propDefMap);
@@ -217,8 +180,6 @@ export class XtalDecor<TTargetElement extends Element = HTMLElement> extends HTM
 
     targetToProxyMap: WeakMap<any, any> = new WeakMap();
 
-    autoForward: boolean | undefined;
-
     initializedSym = Symbol();
 
     /**
@@ -236,5 +197,5 @@ export class XtalDecor<TTargetElement extends Element = HTMLElement> extends HTM
 
 }
 
-xc.letThereBeProps<XtalDecor>(XtalDecor, slicedPropDefs.propDefs, 'onPropChange');
+xc.letThereBeProps<XtalDecor>(XtalDecor, slicedPropDefs, 'onPropChange');
 xc.define(XtalDecor);
