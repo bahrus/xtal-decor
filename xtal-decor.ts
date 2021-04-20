@@ -1,6 +1,6 @@
 import { upgrade as upgr, getAttrInfo} from './upgrade.js';
-import { TargetProxyPair } from './types.d.js';
-export { SelfReferentialHTMLElement } from './types.d.js';
+import { TargetProxyPair, Subscription } from './types.d.js';
+export { SelfReferentialHTMLElement, Subscription} from './types.d.js';
 import { xc,PropAction,PropDef,PropDefMap,ReactiveSurface } from 'xtal-element/lib/XtalCore.js';
 import { EventSettings } from 'xtal-element/types.d.js';
 import { getDestructArgs } from 'xtal-element/lib/getDestructArgs.js';
@@ -33,6 +33,7 @@ export const linkNewTargetProxyPair = ({actions, self, virtualProps, targetToPro
         }
         return;
     }
+    
     const virtualPropHolder = {};
     const proxy = new Proxy(newTarget, {
         set: (target: any, key, value) => {
@@ -50,15 +51,24 @@ export const linkNewTargetProxyPair = ({actions, self, virtualProps, targetToPro
                     action(arg as HTMLElement);
                 }
             });
-            switch(typeof key){
+            switch(typeof key){ //TODO:  remove this in favor of prop subscribers.
                 case 'string':
                     target.dispatchEvent(new CustomEvent(camelToLisp(key) + '-changed', {
                         detail:{
                             value: value
                         }
                     }));
+                    if(self.proxyToSubscriberMap.has(target)){
+                        const subscriptions = self.proxyToSubscriberMap.get(target);
+                        for(const subscription of subscriptions){
+                            if(subscription.propsOfInterest.has(key)){
+                                subscription.callBack(target);
+                            }
+                        }
+                    }
                     break;
             }
+
             return true;            
         },
         get:(target, key)=>{
@@ -116,24 +126,6 @@ function addEvents(on: EventSettings, target: HTMLElement, proxy: HTMLElement, c
 
 
 
-// //https://gomakethings.com/finding-the-next-and-previous-sibling-elements-that-match-a-selector-with-vanilla-js/
-// function getNextSibling (elem: Element, selector: string | undefined) {
-
-// 	// Get the next sibling element
-//     var sibling = elem.nextElementSibling;
-//     if(selector === undefined) return sibling;
-
-// 	// If the sibling matches our selector, use it
-// 	// If not, jump to the next sibling and continue the loop
-// 	while (sibling) {
-// 		if (sibling.matches(selector)) return sibling;
-// 		sibling = sibling.nextElementSibling
-// 	}
-//     return sibling;
-// };
-
-
-
 export const propActions = [linkUpgradeProxyPair, linkNewTargetProxyPair, initializeProxy] as PropAction<any>[];
 const str1: PropDef = {
     type: String,
@@ -179,6 +171,7 @@ export class XtalDecor<TTargetElement extends Element = HTMLElement> extends HTM
     newTargetProxyPair: TargetProxyPair<TTargetElement> | undefined;
 
     targetToProxyMap: WeakMap<any, any> = new WeakMap();
+    proxyToSubscriberMap: WeakMap<any, Subscription[]> = new WeakMap();
 
     initializedSym = Symbol();
 
@@ -193,6 +186,28 @@ export class XtalDecor<TTargetElement extends Element = HTMLElement> extends HTM
     }
     onPropChange(n: string, propDef: PropDef, newVal: any){
         this.reactor.addToQueue(propDef, newVal);
+    }
+
+    subscribe(target: TTargetElement, subscription: Subscription){
+        if(!this.targetToProxyMap.has(target)){
+            setTimeout(() => {
+                this.subscribe(target, subscription);
+            }, 50);
+            return;
+        }
+        const proxy = this.targetToProxyMap.get(target);
+        if(!this.proxyToSubscriberMap.has(proxy)){
+            this.proxyToSubscriberMap.set(proxy, []);
+        }
+        const subscriptions = this.proxyToSubscriberMap.get(proxy);
+        subscriptions.push(subscription);
+    }
+
+    unsubscribe(target: TTargetElement, subscription: Subscription){
+        if(!this.proxyToSubscriberMap.has(target)) return;
+        const subscriptions = this.proxyToSubscriberMap.get(target);
+        const idx = subscriptions.findIndex(x => x.propsOfInterest === subscription.propsOfInterest && x.callBack === subscription.callBack);
+        if(idx > -1) subscriptions.splice(idx, 1);
     }
 
 }

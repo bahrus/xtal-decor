@@ -30,3 +30,5 @@ type eventHandlers = {[key: string]: ((e: Event) => void)[]};
 export interface SelfReferentialHTMLElement extends HTMLElement{
     self: HTMLElement;
 }
+
+export interface Subscription {propsOfInterest: Set<string>, callBack: (target: Element) => void}

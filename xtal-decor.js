@@ -47,13 +47,21 @@ export const linkNewTargetProxyPair = ({ actions, self, virtualProps, targetToPr
                     action(arg);
                 }
             });
-            switch (typeof key) {
+            switch (typeof key) { //TODO:  remove this in favor of prop subscribers.
                 case 'string':
                     target.dispatchEvent(new CustomEvent(camelToLisp(key) + '-changed', {
                         detail: {
                             value: value
                         }
                     }));
+                    if (self.proxyToSubscriberMap.has(target)) {
+                        const subscriptions = self.proxyToSubscriberMap.get(target);
+                        for (const subscription of subscriptions) {
+                            if (subscription.propsOfInterest.has(key)) {
+                                subscription.callBack(target);
+                            }
+                        }
+                    }
                     break;
             }
             return true;
@@ -111,19 +119,6 @@ function addEvents(on, target, proxy, capture) {
         }
     }
 }
-// //https://gomakethings.com/finding-the-next-and-previous-sibling-elements-that-match-a-selector-with-vanilla-js/
-// function getNextSibling (elem: Element, selector: string | undefined) {
-// 	// Get the next sibling element
-//     var sibling = elem.nextElementSibling;
-//     if(selector === undefined) return sibling;
-// 	// If the sibling matches our selector, use it
-// 	// If not, jump to the next sibling and continue the loop
-// 	while (sibling) {
-// 		if (sibling.matches(selector)) return sibling;
-// 		sibling = sibling.nextElementSibling
-// 	}
-//     return sibling;
-// };
 export const propActions = [linkUpgradeProxyPair, linkNewTargetProxyPair, initializeProxy];
 const str1 = {
     type: String,
@@ -149,6 +144,7 @@ export class XtalDecor extends HTMLElement {
         this.propActions = propActions;
         this.reactor = new xc.Rx(this);
         this.targetToProxyMap = new WeakMap();
+        this.proxyToSubscriberMap = new WeakMap();
         this.initializedSym = Symbol();
     }
     connectedCallback() {
@@ -157,6 +153,28 @@ export class XtalDecor extends HTMLElement {
     }
     onPropChange(n, propDef, newVal) {
         this.reactor.addToQueue(propDef, newVal);
+    }
+    subscribe(target, subscription) {
+        if (!this.targetToProxyMap.has(target)) {
+            setTimeout(() => {
+                this.subscribe(target, subscription);
+            }, 50);
+            return;
+        }
+        const proxy = this.targetToProxyMap.get(target);
+        if (!this.proxyToSubscriberMap.has(proxy)) {
+            this.proxyToSubscriberMap.set(proxy, []);
+        }
+        const subscriptions = this.proxyToSubscriberMap.get(proxy);
+        subscriptions.push(subscription);
+    }
+    unsubscribe(target, subscription) {
+        if (!this.proxyToSubscriberMap.has(target))
+            return;
+        const subscriptions = this.proxyToSubscriberMap.get(target);
+        const idx = subscriptions.findIndex(x => x.propsOfInterest === subscription.propsOfInterest && x.callBack === subscription.callBack);
+        if (idx > -1)
+            subscriptions.splice(idx, 1);
     }
 }
 XtalDecor.is = 'xtal-decor';
