@@ -21,8 +21,8 @@
     "es-dev-server": "2.1.0",
     "nomodule": "0.0.10",
     "on-to-me": "0.0.17",
-    "xtal-test": "0.0.50",
-    "proxy-decor": "0.0.1"
+    "proxy-decor": "0.0.3",
+    "xtal-test": "0.0.50"
   },
   "author": "anderson.bruce.b@gmail.com",
   "license": "MIT",

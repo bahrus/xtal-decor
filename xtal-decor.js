@@ -135,8 +135,6 @@ function addEvents(on, target, proxy, capture) {
     }
 }
 const linkForwarder = ({ autoForward, ifWantsToBe, self }) => {
-    if (!autoForward)
-        return;
     import('css-observe/css-observe.js');
     const observer = document.createElement('css-observe');
     observer.observe = true;
@@ -187,12 +185,17 @@ const obj1 = {
 const obj2 = {
     type: Object,
 };
+const obj3 = {
+    ...obj1,
+    stopReactionsIfFalsy: true,
+};
 export const propDefMap = {
     upgrade: str1, ifWantsToBe: str1,
-    on: obj1, newTarget: obj2, init: obj1, targetToProxyMap: obj1, actions: obj1, newTargetProxyPair: obj1, newForwarder: obj1, capture: obj1,
+    on: obj1, newTarget: obj2, init: obj1, targetToProxyMap: obj1, actions: obj1, newTargetProxyPair: obj1, newForwarder: obj3, capture: obj1,
     autoForward: {
         type: Boolean,
         dry: true,
+        stopReactionsIfFalsy: true,
     },
 };
 const slicedPropDefs = xc.getSlicedPropDefs(propDefMap);

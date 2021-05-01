@@ -170,7 +170,6 @@ function addEvents(on: EventSettings | undefined, target: HTMLElement, proxy: HT
 }
 
 const linkForwarder = ({autoForward, ifWantsToBe, self}: XtalDecor) => {
-    if(!autoForward) return;
     import('css-observe/css-observe.js');
     const observer = document.createElement('css-observe') as any;
     observer.observe = true;
@@ -221,12 +220,17 @@ const obj1: PropDef = {
 const obj2: PropDef = {
     type: Object,
 };
+const obj3: PropDef={
+    ...obj1,
+    stopReactionsIfFalsy: true,
+}
 export const propDefMap: PropDefMap<XtalDecor> = {
     upgrade: str1, ifWantsToBe: str1,
-    on: obj1, newTarget: obj2, init: obj1, targetToProxyMap: obj1, actions: obj1, newTargetProxyPair: obj1, newForwarder: obj1, capture: obj1,
+    on: obj1, newTarget: obj2, init: obj1, targetToProxyMap: obj1, actions: obj1, newTargetProxyPair: obj1, newForwarder: obj3, capture: obj1,
     autoForward:{
         type: Boolean,
         dry: true,
+        stopReactionsIfFalsy: true,
     },
 };
 const slicedPropDefs = xc.getSlicedPropDefs(propDefMap);
