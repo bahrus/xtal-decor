@@ -13,26 +13,6 @@ export class XtalDecor extends HTMLElement {
         this.reactor = new xc.Rx(this);
         this.targetToProxyMap = new WeakMap();
         this.initializedSym = Symbol();
-        // subscribe(target: TTargetElement, subscription: Subscription){
-        //     if(!this.targetToProxyMap.has(target)){
-        //         setTimeout(() => {
-        //             this.subscribe(target, subscription);
-        //         }, 50);
-        //         return;
-        //     }
-        //     const proxy = this.targetToProxyMap.get(target);
-        //     if(!this.proxyToSubscriberMap.has(proxy)){
-        //         this.proxyToSubscriberMap.set(proxy, []);
-        //     }
-        //     const subscriptions = this.proxyToSubscriberMap.get(proxy);
-        //     subscriptions.push(subscription);
-        // }
-        // unsubscribe(target: TTargetElement, subscription: Subscription){
-        //     if(!this.proxyToSubscriberMap.has(target)) return;
-        //     const subscriptions = this.proxyToSubscriberMap.get(target);
-        //     const idx = subscriptions.findIndex(x => x.propsOfInterest === subscription.propsOfInterest && x.callBack === subscription.callBack);
-        //     if(idx > -1) subscriptions.splice(idx, 1);
-        // }
     }
     connectedCallback() {
         this.style.display = 'none';
@@ -80,7 +60,7 @@ export const linkNewTargetProxyPair = ({ actions, self, virtualProps, targetToPr
             }
             if (key === 'self')
                 return true;
-            actions.forEach(action => {
+            actions?.forEach(action => {
                 const dependencies = getDestructArgs(action);
                 if (dependencies.includes(key)) {
                     //TODO:  symbols
@@ -127,7 +107,8 @@ const initializeProxy = ({ newTargetProxyPair, init, self, on, capture, ifWantsT
     const newProxy = newTargetProxyPair.proxy;
     newProxy.self = newProxy;
     const newTarget = newTargetProxyPair.target;
-    init(newProxy);
+    if (init !== undefined)
+        init(newProxy);
     const attr = getAttrInfo(newTarget, ifWantsToBe, true);
     if (attr !== null && attr.length > 0 && attr[0].length > 0) {
         Object.assign(newProxy, JSON.parse(attr[0]));
@@ -160,7 +141,7 @@ const linkForwarder = ({ autoForward, ifWantsToBe, self }) => {
     const observer = document.createElement('css-observe');
     observer.observe = true;
     observer.selector = `proxy-decor[for="${ifWantsToBe}"]`;
-    observer.addEventListener('latest-match-changed', e => {
+    observer.addEventListener('latest-match-changed', (e) => {
         self.newForwarder = observer.latestMatch;
     });
     self.appendChild(observer);

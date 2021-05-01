@@ -15,7 +15,7 @@ function monitor<T extends EventTarget>(id: string, beAttrib: string, args: Upgr
             console.warn("Mismatch found.");
             return;
         }
-        (target as Element).setAttribute(`${val[1]}is-${args.ifWantsToBe}`, val[0]);
+        (target as Element).setAttribute(`${val[1]}is-${args.ifWantsToBe}`, val[0] as string);
         (target as Element).removeAttribute(`${val[1]}be-${args.ifWantsToBe}`);
         if(callback !== undefined) callback(target as T);
     });

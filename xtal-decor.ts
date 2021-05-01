@@ -1,7 +1,7 @@
 import { upgrade as upgr, getAttrInfo} from './upgrade.js';
 import { TargetProxyPair, Subscription } from './types.d.js';
 export { SelfReferentialHTMLElement, Subscription} from './types.d.js';
-import { xc,PropAction,PropDef,PropDefMap,ReactiveSurface } from 'xtal-element/lib/XtalCore.js';
+import { xc,PropAction,PropDef,PropDefMap,ReactiveSurface, IReactor } from 'xtal-element/lib/XtalCore.js';
 import { EventSettings } from 'xtal-element/types.d.js';
 import { getDestructArgs } from 'xtal-element/lib/getDestructArgs.js';
 
@@ -9,11 +9,11 @@ export const eventName = 'yzDz0XScOUWhk/CI+tT4vg';
 /**
  * @element xtal-decor
  */
-export class XtalDecor<TTargetElement extends Element = HTMLElement> extends HTMLElement{
+export class XtalDecor<TTargetElement extends Element = HTMLElement> extends HTMLElement implements ReactiveSurface{
     static is = 'xtal-decor';
     self = this;
     propActions = propActions;
-    reactor = new xc.Rx(this);
+    reactor: IReactor = new xc.Rx(this);
 
 
 
@@ -29,9 +29,9 @@ export class XtalDecor<TTargetElement extends Element = HTMLElement> extends HTM
 
     capture: EventSettings | undefined;
 
-    newTarget: TTargetElement;
+    newTarget: TTargetElement | undefined;
 
-    newForwarder: HTMLElement;
+    newForwarder: HTMLElement | undefined;
 
     newTargetProxyPair: TargetProxyPair<TTargetElement> | undefined;
 
@@ -55,27 +55,7 @@ export class XtalDecor<TTargetElement extends Element = HTMLElement> extends HTM
         this.reactor.addToQueue(propDef, newVal);
     }
 
-    // subscribe(target: TTargetElement, subscription: Subscription){
-    //     if(!this.targetToProxyMap.has(target)){
-    //         setTimeout(() => {
-    //             this.subscribe(target, subscription);
-    //         }, 50);
-    //         return;
-    //     }
-    //     const proxy = this.targetToProxyMap.get(target);
-    //     if(!this.proxyToSubscriberMap.has(proxy)){
-    //         this.proxyToSubscriberMap.set(proxy, []);
-    //     }
-    //     const subscriptions = this.proxyToSubscriberMap.get(proxy);
-    //     subscriptions.push(subscription);
-    // }
 
-    // unsubscribe(target: TTargetElement, subscription: Subscription){
-    //     if(!this.proxyToSubscriberMap.has(target)) return;
-    //     const subscriptions = this.proxyToSubscriberMap.get(target);
-    //     const idx = subscriptions.findIndex(x => x.propsOfInterest === subscription.propsOfInterest && x.callBack === subscription.callBack);
-    //     if(idx > -1) subscriptions.splice(idx, 1);
-    // }
 
 }
 export function hasUndefined(arr: any[]){
@@ -89,8 +69,8 @@ const linkUpgradeProxyPair = ({upgrade, ifWantsToBe, self, init, actions}: XtalD
     }
     upgr({
         shadowDomPeer: self,
-        upgrade: upgrade,
-        ifWantsToBe: ifWantsToBe,
+        upgrade: upgrade!,
+        ifWantsToBe: ifWantsToBe!,
     }, callback);
 }
 
@@ -99,14 +79,14 @@ export const linkNewTargetProxyPair = ({actions, self, virtualProps, targetToPro
     if(newTarget === undefined) return;
     const existingProxy = targetToProxyMap.get(newTarget);
     if(existingProxy){
-        const attr = getAttrInfo(newTarget, ifWantsToBe, true);
-        if(attr !== null && attr.length > 0 && attr[0].length > 0){
-            Object.assign(existingProxy, JSON.parse(attr[0]));
+        const attr = getAttrInfo(newTarget, ifWantsToBe!, true);
+        if(attr !== null && attr.length > 0 && attr[0]!.length > 0){
+            Object.assign(existingProxy, JSON.parse(attr[0]!));
         }
         return;
     }
     
-    const virtualPropHolder = {};
+    const virtualPropHolder: any = {};
     const proxy = new Proxy(newTarget, {
         set: (target: any, key, value) => {
             if(key === 'self' || (virtualProps !== undefined && virtualProps.includes(key as string))){
@@ -115,7 +95,7 @@ export const linkNewTargetProxyPair = ({actions, self, virtualProps, targetToPro
                 target[key] = value;
             }
             if(key === 'self') return true;
-            actions.forEach(action =>{
+            actions?.forEach(action =>{
                 const dependencies = getDestructArgs(action);
                 if(dependencies.includes(key as string)){
                     //TODO:  symbols
@@ -162,17 +142,17 @@ const initializeProxy = ({newTargetProxyPair, init, self, on, capture, ifWantsTo
     const newProxy = newTargetProxyPair.proxy;
     (<any>newProxy).self = newProxy;
     const newTarget = newTargetProxyPair.target;
-    init(newProxy);
-    const attr = getAttrInfo(newTarget, ifWantsToBe, true);
-    if(attr !== null && attr.length > 0 && attr[0].length > 0){
-        Object.assign(newProxy, JSON.parse(attr[0]));
+    if(init !== undefined) init(newProxy);
+    const attr = getAttrInfo(newTarget, ifWantsToBe!, true);
+    if(attr !== null && attr.length > 0 && attr[0]!.length > 0){
+        Object.assign(newProxy, JSON.parse(attr[0]!));
     }
-    addEvents(on, newTarget, newProxy, false);
-    addEvents(capture, newTarget, newProxy, true);
+    addEvents(on!, newTarget, newProxy, false);
+    addEvents(capture!, newTarget, newProxy, true);
     delete self.newTargetProxyPair;
 }
 
-function addEvents(on: EventSettings, target: HTMLElement, proxy: HTMLElement, capture: boolean){
+function addEvents(on: EventSettings | undefined, target: HTMLElement, proxy: HTMLElement, capture: boolean){
     if(on === undefined) return;
     for(var key in on){
         const eventSetting = on[key];
@@ -195,7 +175,7 @@ const linkForwarder = ({autoForward, ifWantsToBe, self}: XtalDecor) => {
     const observer = document.createElement('css-observe') as any;
     observer.observe = true;
     observer.selector = `proxy-decor[for="${ifWantsToBe}"]`;
-    observer.addEventListener('latest-match-changed', e => {
+    observer.addEventListener('latest-match-changed', (e: Event) => {
         self.newForwarder = observer.latestMatch;
     });
     self.appendChild(observer);
@@ -218,7 +198,7 @@ function getNextSibling (elem: Element, selector: string | undefined) {
 };
 
 const doAutoForward = ({newForwarder, upgrade, ifWantsToBe, initializedSym, targetToProxyMap, self}: XtalDecor) => {
-    const el = getNextSibling(newForwarder, `${upgrade}[is-${ifWantsToBe}],${upgrade}[be-${ifWantsToBe}]`);
+    const el = getNextSibling(newForwarder!, `${upgrade}[is-${ifWantsToBe}],${upgrade}[be-${ifWantsToBe}]`);
     if(el === undefined || !targetToProxyMap.has(el)){
         setTimeout(() => doAutoForward(self), 50);
         return;
