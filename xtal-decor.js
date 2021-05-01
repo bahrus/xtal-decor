@@ -159,7 +159,7 @@ const linkForwarder = ({ autoForward, ifWantsToBe, self }) => {
     import('css-observe/css-observe.js');
     const observer = document.createElement('css-observe');
     observer.observe = true;
-    observer.selector = `proxy-props[for="${ifWantsToBe}"]`;
+    observer.selector = `proxy-decor[for="${ifWantsToBe}"]`;
     observer.addEventListener('latest-match-changed', e => {
         self.newForwarder = observer.latestMatch;
     });
@@ -181,34 +181,19 @@ function getNextSibling(elem, selector) {
     return sibling;
 }
 ;
-const doAutoForward = ({ newForwarder, upgrade, ifWantsToBe, initializedSym, targetToProxyMap }) => {
+const doAutoForward = ({ newForwarder, upgrade, ifWantsToBe, initializedSym, targetToProxyMap, self }) => {
+    const el = getNextSibling(newForwarder, `${upgrade}[is-${ifWantsToBe}],${upgrade}[be-${ifWantsToBe}]`);
+    if (el === undefined || !targetToProxyMap.has(el)) {
+        setTimeout(() => doAutoForward(self), 50);
+        return;
+    }
+    ;
+    const proxy = targetToProxyMap.get(el);
+    newForwarder.proxy = proxy;
     if (newForwarder === undefined)
         return;
-    const proxy = new Proxy(newForwarder, {
-        set: (target, key, value) => {
-            target[key] = value;
-            const el = getNextSibling(target, `${upgrade}[is-${ifWantsToBe}]`);
-            if (el === undefined)
-                return true;
-            const proxy = targetToProxyMap.get(el);
-            if (proxy === undefined)
-                return true;
-            if (el[initializedSym] === undefined) {
-                const props = {};
-                Object.getOwnPropertyNames(target).forEach(targetKey => {
-                    props[targetKey] = target[targetKey];
-                });
-                Object.assign(proxy, props);
-                el[initializedSym] = true;
-            }
-            else {
-                proxy[key] = value;
-            }
-            return true;
-        },
-    });
 };
-export const propActions = [linkUpgradeProxyPair, linkNewTargetProxyPair, initializeProxy];
+export const propActions = [linkUpgradeProxyPair, linkNewTargetProxyPair, initializeProxy, linkForwarder, doAutoForward];
 const str1 = {
     type: String,
     dry: true,
