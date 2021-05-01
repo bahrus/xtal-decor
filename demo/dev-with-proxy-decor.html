@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <div>
+        <xtal-decor upgrade=button if-wants-to-be=a-butterbeer-counter><script nomodule=ish>
+            const decoProps = {
+                actions: [
+                    ({count, self}) => {
+                        window.alert(count + " butterbeers sold");
+                    }
+                ],
+                on: {
+                    'click': ({self}) => {
+                        console.log(self);
+                        self.count++;
+                    }
+                },
+                init: ({self}) =>{
+                    self.count = 0;
+                }
+            }
+            Object.assign(selfish.parentElement, decoProps);
+        </script></xtal-decor>
+
+        <button id=butterBeerCounter be-a-butterbeer-counter='{"count": 1000}' disabled>Click me to Order Your Drink</button>
+        <on-to-me on="count-changed" to=[-text-content] val=target.count></on-to-me>
+        <span -text-content></span> drinks sold.
+
+        <button onclick="setCount()">Set count to 2000</button>
+        <script>
+            function setCount(){
+                butterBeerCounter.setAttribute('be-a-butterbeer-counter', '{"count": 2000}');
+            }
+        </script>
+        <script type=importmap>
+        {
+            "imports": {
+                "xtal-element/": "../node_modules/xtal-element/",
+                "trans-render/": "../node_modules/trans-render/",
+                "on-to-me/": "../node_modules/on-to-me/",
+                "nomodule/": "../node_modules/nomodule/",
+                "css-observe/": "../node_modules/css-observe/"
+            }
+        }
+        </script>
+        <script type=module>
+            import '../xtal-decor.js';
+            import 'on-to-me/on-to-me.js';
+            import 'nomodule/no-module.js';
+        </script>
+    </div>
+</body>
+
+</html>
