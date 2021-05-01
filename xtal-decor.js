@@ -1,7 +1,48 @@
 import { upgrade as upgr, getAttrInfo } from './upgrade.js';
 import { xc } from 'xtal-element/lib/XtalCore.js';
 import { getDestructArgs } from 'xtal-element/lib/getDestructArgs.js';
-import { camelToLisp } from 'trans-render/lib/camelToLisp.js';
+export const eventName = 'yzDz0XScOUWhk/CI+tT4vg';
+/**
+ * @element xtal-decor
+ */
+export class XtalDecor extends HTMLElement {
+    constructor() {
+        super(...arguments);
+        this.self = this;
+        this.propActions = propActions;
+        this.reactor = new xc.Rx(this);
+        this.targetToProxyMap = new WeakMap();
+        this.initializedSym = Symbol();
+        // subscribe(target: TTargetElement, subscription: Subscription){
+        //     if(!this.targetToProxyMap.has(target)){
+        //         setTimeout(() => {
+        //             this.subscribe(target, subscription);
+        //         }, 50);
+        //         return;
+        //     }
+        //     const proxy = this.targetToProxyMap.get(target);
+        //     if(!this.proxyToSubscriberMap.has(proxy)){
+        //         this.proxyToSubscriberMap.set(proxy, []);
+        //     }
+        //     const subscriptions = this.proxyToSubscriberMap.get(proxy);
+        //     subscriptions.push(subscription);
+        // }
+        // unsubscribe(target: TTargetElement, subscription: Subscription){
+        //     if(!this.proxyToSubscriberMap.has(target)) return;
+        //     const subscriptions = this.proxyToSubscriberMap.get(target);
+        //     const idx = subscriptions.findIndex(x => x.propsOfInterest === subscription.propsOfInterest && x.callBack === subscription.callBack);
+        //     if(idx > -1) subscriptions.splice(idx, 1);
+        // }
+    }
+    connectedCallback() {
+        this.style.display = 'none';
+        xc.hydrate(this, slicedPropDefs);
+    }
+    onPropChange(n, propDef, newVal) {
+        this.reactor.addToQueue(propDef, newVal);
+    }
+}
+XtalDecor.is = 'xtal-decor';
 export function hasUndefined(arr) {
     return arr.includes(undefined);
 }
@@ -49,19 +90,12 @@ export const linkNewTargetProxyPair = ({ actions, self, virtualProps, targetToPr
             });
             switch (typeof key) { //TODO:  remove this in favor of prop subscribers.
                 case 'string':
-                    target.dispatchEvent(new CustomEvent(camelToLisp(key) + '-changed', {
+                    target.dispatchEvent(new CustomEvent(eventName, {
                         detail: {
+                            key: key,
                             value: value
                         }
                     }));
-                    if (self.proxyToSubscriberMap.has(target)) {
-                        const subscriptions = self.proxyToSubscriberMap.get(target);
-                        for (const subscription of subscriptions) {
-                            if (subscription.propsOfInterest.has(key)) {
-                                subscription.callBack(target);
-                            }
-                        }
-                    }
                     break;
             }
             return true;
@@ -119,6 +153,61 @@ function addEvents(on, target, proxy, capture) {
         }
     }
 }
+const linkForwarder = ({ autoForward, ifWantsToBe, self }) => {
+    if (!autoForward)
+        return;
+    import('css-observe/css-observe.js');
+    const observer = document.createElement('css-observe');
+    observer.observe = true;
+    observer.selector = `proxy-props[for="${ifWantsToBe}"]`;
+    observer.addEventListener('latest-match-changed', e => {
+        self.newForwarder = observer.latestMatch;
+    });
+    self.appendChild(observer);
+};
+//https://gomakethings.com/finding-the-next-and-previous-sibling-elements-that-match-a-selector-with-vanilla-js/
+function getNextSibling(elem, selector) {
+    // Get the next sibling element
+    var sibling = elem.nextElementSibling;
+    if (selector === undefined)
+        return sibling;
+    // If the sibling matches our selector, use it
+    // If not, jump to the next sibling and continue the loop
+    while (sibling) {
+        if (sibling.matches(selector))
+            return sibling;
+        sibling = sibling.nextElementSibling;
+    }
+    return sibling;
+}
+;
+const doAutoForward = ({ newForwarder, upgrade, ifWantsToBe, initializedSym, targetToProxyMap }) => {
+    if (newForwarder === undefined)
+        return;
+    const proxy = new Proxy(newForwarder, {
+        set: (target, key, value) => {
+            target[key] = value;
+            const el = getNextSibling(target, `${upgrade}[is-${ifWantsToBe}]`);
+            if (el === undefined)
+                return true;
+            const proxy = targetToProxyMap.get(el);
+            if (proxy === undefined)
+                return true;
+            if (el[initializedSym] === undefined) {
+                const props = {};
+                Object.getOwnPropertyNames(target).forEach(targetKey => {
+                    props[targetKey] = target[targetKey];
+                });
+                Object.assign(proxy, props);
+                el[initializedSym] = true;
+            }
+            else {
+                proxy[key] = value;
+            }
+            return true;
+        },
+    });
+};
 export const propActions = [linkUpgradeProxyPair, linkNewTargetProxyPair, initializeProxy];
 const str1 = {
     type: String,
@@ -135,48 +224,11 @@ const obj2 = {
 export const propDefMap = {
     upgrade: str1, ifWantsToBe: str1,
     on: obj1, newTarget: obj2, init: obj1, targetToProxyMap: obj1, actions: obj1, newTargetProxyPair: obj1, newForwarder: obj1, capture: obj1,
+    autoForward: {
+        type: Boolean,
+        dry: true,
+    },
 };
 const slicedPropDefs = xc.getSlicedPropDefs(propDefMap);
-export class XtalDecor extends HTMLElement {
-    constructor() {
-        super(...arguments);
-        this.self = this;
-        this.propActions = propActions;
-        this.reactor = new xc.Rx(this);
-        this.targetToProxyMap = new WeakMap();
-        this.proxyToSubscriberMap = new WeakMap();
-        this.initializedSym = Symbol();
-    }
-    connectedCallback() {
-        this.style.display = 'none';
-        xc.hydrate(this, slicedPropDefs);
-    }
-    onPropChange(n, propDef, newVal) {
-        this.reactor.addToQueue(propDef, newVal);
-    }
-    subscribe(target, subscription) {
-        if (!this.targetToProxyMap.has(target)) {
-            setTimeout(() => {
-                this.subscribe(target, subscription);
-            }, 50);
-            return;
-        }
-        const proxy = this.targetToProxyMap.get(target);
-        if (!this.proxyToSubscriberMap.has(proxy)) {
-            this.proxyToSubscriberMap.set(proxy, []);
-        }
-        const subscriptions = this.proxyToSubscriberMap.get(proxy);
-        subscriptions.push(subscription);
-    }
-    unsubscribe(target, subscription) {
-        if (!this.proxyToSubscriberMap.has(target))
-            return;
-        const subscriptions = this.proxyToSubscriberMap.get(target);
-        const idx = subscriptions.findIndex(x => x.propsOfInterest === subscription.propsOfInterest && x.callBack === subscription.callBack);
-        if (idx > -1)
-            subscriptions.splice(idx, 1);
-    }
-}
-XtalDecor.is = 'xtal-decor';
 xc.letThereBeProps(XtalDecor, slicedPropDefs, 'onPropChange');
 xc.define(XtalDecor);

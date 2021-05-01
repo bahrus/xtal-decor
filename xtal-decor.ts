@@ -4,8 +4,80 @@ export { SelfReferentialHTMLElement, Subscription} from './types.d.js';
 import { xc,PropAction,PropDef,PropDefMap,ReactiveSurface } from 'xtal-element/lib/XtalCore.js';
 import { EventSettings } from 'xtal-element/types.d.js';
 import { getDestructArgs } from 'xtal-element/lib/getDestructArgs.js';
-import { camelToLisp } from 'trans-render/lib/camelToLisp.js';
 
+export const eventName = 'yzDz0XScOUWhk/CI+tT4vg';
+/**
+ * @element xtal-decor
+ */
+export class XtalDecor<TTargetElement extends Element = HTMLElement> extends HTMLElement{
+    static is = 'xtal-decor';
+    self = this;
+    propActions = propActions;
+    reactor = new xc.Rx(this);
+
+
+
+    upgrade: string | undefined;
+
+    ifWantsToBe: string | undefined;
+
+    init: PropAction<TTargetElement> | undefined;
+
+    actions: PropAction<any>[] | undefined;
+
+    on: EventSettings | undefined;
+
+    capture: EventSettings | undefined;
+
+    newTarget: TTargetElement;
+
+    newForwarder: HTMLElement;
+
+    newTargetProxyPair: TargetProxyPair<TTargetElement> | undefined;
+
+    targetToProxyMap: WeakMap<any, any> = new WeakMap();
+    //proxyToSubscriberMap: WeakMap<any, Subscription[]> = new WeakMap();
+
+    autoForward: boolean | undefined;
+
+    initializedSym = Symbol();
+
+    /**
+     * Set these properties via a WeakMap, rather than on the (native) element itself.
+     */
+    virtualProps: string[] | undefined;
+
+    connectedCallback(){
+        this.style.display = 'none';
+        xc.hydrate(this, slicedPropDefs);
+    }
+    onPropChange(n: string, propDef: PropDef, newVal: any){
+        this.reactor.addToQueue(propDef, newVal);
+    }
+
+    // subscribe(target: TTargetElement, subscription: Subscription){
+    //     if(!this.targetToProxyMap.has(target)){
+    //         setTimeout(() => {
+    //             this.subscribe(target, subscription);
+    //         }, 50);
+    //         return;
+    //     }
+    //     const proxy = this.targetToProxyMap.get(target);
+    //     if(!this.proxyToSubscriberMap.has(proxy)){
+    //         this.proxyToSubscriberMap.set(proxy, []);
+    //     }
+    //     const subscriptions = this.proxyToSubscriberMap.get(proxy);
+    //     subscriptions.push(subscription);
+    // }
+
+    // unsubscribe(target: TTargetElement, subscription: Subscription){
+    //     if(!this.proxyToSubscriberMap.has(target)) return;
+    //     const subscriptions = this.proxyToSubscriberMap.get(target);
+    //     const idx = subscriptions.findIndex(x => x.propsOfInterest === subscription.propsOfInterest && x.callBack === subscription.callBack);
+    //     if(idx > -1) subscriptions.splice(idx, 1);
+    // }
+
+}
 export function hasUndefined(arr: any[]){
     return arr.includes(undefined);
 }
@@ -53,19 +125,12 @@ export const linkNewTargetProxyPair = ({actions, self, virtualProps, targetToPro
             });
             switch(typeof key){ //TODO:  remove this in favor of prop subscribers.
                 case 'string':
-                    target.dispatchEvent(new CustomEvent(camelToLisp(key) + '-changed', {
+                    target.dispatchEvent(new CustomEvent(eventName, {
                         detail:{
+                            key: key,
                             value: value
                         }
                     }));
-                    if(self.proxyToSubscriberMap.has(target)){
-                        const subscriptions = self.proxyToSubscriberMap.get(target);
-                        for(const subscription of subscriptions){
-                            if(subscription.propsOfInterest.has(key)){
-                                subscription.callBack(target);
-                            }
-                        }
-                    }
                     break;
             }
 
@@ -199,75 +264,7 @@ export const propDefMap: PropDefMap<XtalDecor> = {
     },
 };
 const slicedPropDefs = xc.getSlicedPropDefs(propDefMap);
-export class XtalDecor<TTargetElement extends Element = HTMLElement> extends HTMLElement{
-    static is = 'xtal-decor';
-    self = this;
-    propActions = propActions;
-    reactor = new xc.Rx(this);
 
-
-
-    upgrade: string | undefined;
-
-    ifWantsToBe: string | undefined;
-
-    init: PropAction<TTargetElement> | undefined;
-
-    actions: PropAction<any>[] | undefined;
-
-    on: EventSettings | undefined;
-
-    capture: EventSettings | undefined;
-
-    newTarget: TTargetElement;
-
-    newForwarder: HTMLElement;
-
-    newTargetProxyPair: TargetProxyPair<TTargetElement> | undefined;
-
-    targetToProxyMap: WeakMap<any, any> = new WeakMap();
-    proxyToSubscriberMap: WeakMap<any, Subscription[]> = new WeakMap();
-
-    autoForward: boolean | undefined;
-
-    initializedSym = Symbol();
-
-    /**
-     * Set these properties via a WeakMap, rather than on the (native) element itself.
-     */
-    virtualProps: string[] | undefined;
-
-    connectedCallback(){
-        this.style.display = 'none';
-        xc.hydrate(this, slicedPropDefs);
-    }
-    onPropChange(n: string, propDef: PropDef, newVal: any){
-        this.reactor.addToQueue(propDef, newVal);
-    }
-
-    subscribe(target: TTargetElement, subscription: Subscription){
-        if(!this.targetToProxyMap.has(target)){
-            setTimeout(() => {
-                this.subscribe(target, subscription);
-            }, 50);
-            return;
-        }
-        const proxy = this.targetToProxyMap.get(target);
-        if(!this.proxyToSubscriberMap.has(proxy)){
-            this.proxyToSubscriberMap.set(proxy, []);
-        }
-        const subscriptions = this.proxyToSubscriberMap.get(proxy);
-        subscriptions.push(subscription);
-    }
-
-    unsubscribe(target: TTargetElement, subscription: Subscription){
-        if(!this.proxyToSubscriberMap.has(target)) return;
-        const subscriptions = this.proxyToSubscriberMap.get(target);
-        const idx = subscriptions.findIndex(x => x.propsOfInterest === subscription.propsOfInterest && x.callBack === subscription.callBack);
-        if(idx > -1) subscriptions.splice(idx, 1);
-    }
-
-}
 
 xc.letThereBeProps<XtalDecor>(XtalDecor, slicedPropDefs, 'onPropChange');
 xc.define(XtalDecor);
