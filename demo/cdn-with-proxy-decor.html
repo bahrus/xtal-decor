@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <xtal-decor upgrade=button if-wants-to-be=a-butterbeer-counter auto-forward virtual-props='["count"]'><script nomodule=ish>
+        const decoProps = {
+            actions: [
+                ({count, self}) => {
+                    window.alert(count + " butterbeers sold");
+                }
+            ],
+            on: {
+                'click': ({self}) => {
+                    console.log(self);
+                    self.count++;
+                }
+            },
+            init: ({self}) =>{
+                self.count = 0;
+            }
+        }
+        Object.assign(selfish.parentElement, decoProps);
+    </script></xtal-decor>
+
+    <proxy-decor id=proxyDecor for=a-butterbeer-counter ></proxy-decor>
+    <button id=butterBeerCounter be-a-butterbeer-counter='{"count": 1000}' disabled>Click Me to Order Your Drink</button>
+    <on-to-me observe="proxy-decor" on="count-changed" to=[-text-content] me=1 val=target.proxy.count init-val=proxy.count init-event=initialized></on-to-me>
+    <span -text-content></span> drinks sold.
+
+    <button onclick="setCount()">Set count to 2000</button>
+    <script>
+        function setCount(){
+            proxyDecor.proxy.count = 2000;
+        }
+    </script>
+
+    <script type=module crossorigin>
+        import 'https://cdn.skypack.dev/xtal-decor@0.0.30?min';
+        import 'https://cdn.skypack.dev/proxy-decor@0.0.5?min';
+        import 'https://cdn.skypack.dev/on-to-me@0.0.21?min';
+        import 'https://cdn.skypack.dev/nomodule@0.0.11?min';
+    </script>
+</body>
+
+</html>
