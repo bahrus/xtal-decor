@@ -9,59 +9,56 @@
 </head>
 
 <body>
-    <div>
-        <xtal-decor upgrade=button if-wants-to-be=a-butterbeer-counter auto-forward><script nomodule=ish>
-            const decoProps = {
-                actions: [
-                    ({count, self}) => {
-                        window.alert(count + " butterbeers sold");
-                    }
-                ],
-                on: {
-                    'click': ({self}) => {
-                        console.log(self);
-                        self.count++;
-                    }
-                },
-                init: ({self}) =>{
-                    self.count = 0;
+    <xtal-decor upgrade=button if-wants-to-be=a-butterbeer-counter auto-forward virtual-props='["count"]'><script nomodule=ish>
+        const decoProps = {
+            actions: [
+                ({count, self}) => {
+                    window.alert(count + " butterbeers sold");
                 }
-            }
-            Object.assign(selfish.parentElement, decoProps);
-        </script></xtal-decor>
-
-        <proxy-decor id=proxyDecor for=a-butterbeer-counter ></proxy-decor>
-        <button id=butterBeerCounter be-a-butterbeer-counter='{"count": 1000}' disabled>Click me to Order Your Drink</button>
-        <on-to-me observe="proxy-decor" on="count-changed" to=[-text-content] val=target.proxy.count init-val=proxy.count init-event=initialized></on-to-me>
-        <span -text-content></span> drinks sold.
-
-        <button onclick="setCount()">Set count to 2000</button>
-        <script>
-            function setCount(){
-                //butterBeerCounter.setAttribute('be-a-butterbeer-counter', '{"count": 2000}');
-                proxyDecor.proxy.count = 2000;
-            }
-        </script>
-        <script type=importmap>
-        {
-            "imports": {
-                "xtal-element/": "../node_modules/xtal-element/",
-                "xtal-decor/": "../",
-                "trans-render/": "../node_modules/trans-render/",
-                "on-to-me/": "../node_modules/on-to-me/",
-                "nomodule/": "../node_modules/nomodule/",
-                "css-observe/": "../node_modules/css-observe/",
-                "proxy-decor/": "../node_modules/proxy-decor/"
+            ],
+            on: {
+                'click': ({self}) => {
+                    console.log(self);
+                    self.count++;
+                }
+            },
+            init: ({self}) =>{
+                self.count = 0;
             }
         }
-        </script>
-        <script type=module>
-            import '../xtal-decor.js';
-            import 'on-to-me/on-to-me.js';
-            import 'proxy-decor/proxy-decor.js';
-            import 'nomodule/no-module.js';
-        </script>
-    </div>
+        Object.assign(selfish.parentElement, decoProps);
+    </script></xtal-decor>
+
+    <proxy-decor id=proxyDecor for=a-butterbeer-counter ></proxy-decor>
+    <button id=butterBeerCounter be-a-butterbeer-counter='{"count": 1000}' disabled>Click Me to Order Your Drink</button>
+    <on-to-me observe="proxy-decor" on="count-changed" to=[-text-content] val=target.proxy.count init-val=proxy.count init-event=initialized></on-to-me>
+    <span -text-content></span> drinks sold.
+
+    <button onclick="setCount()">Set count to 2000</button>
+    <script>
+        function setCount(){
+            proxyDecor.proxy.count = 2000;
+        }
+    </script>
+    <script type=importmap>
+    {
+        "imports": {
+            "xtal-element/": "../node_modules/xtal-element/",
+            "xtal-decor/": "../",
+            "trans-render/": "../node_modules/trans-render/",
+            "on-to-me/": "../node_modules/on-to-me/",
+            "nomodule/": "../node_modules/nomodule/",
+            "css-observe/": "../node_modules/css-observe/",
+            "proxy-decor/": "../node_modules/proxy-decor/"
+        }
+    }
+    </script>
+    <script type=module>
+        import '../xtal-decor.js';
+        import 'on-to-me/on-to-me.js';
+        import 'proxy-decor/proxy-decor.js';
+        import 'nomodule/no-module.js';
+    </script>
 </body>
 
 </html>
