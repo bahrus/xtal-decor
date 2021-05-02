@@ -30,7 +30,7 @@
             Object.assign(selfish.parentElement, decoProps);
         </script></xtal-decor>
 
-        <proxy-decor id=proxy-decor for=a-butterbeer-counter ></proxy-decor>
+        <proxy-decor id=proxyDecor for=a-butterbeer-counter ></proxy-decor>
         <button id=butterBeerCounter be-a-butterbeer-counter='{"count": 1000}' disabled>Click me to Order Your Drink</button>
         <on-to-me observe="proxy-decor" on="count-changed" to=[-text-content] val=target.proxy.count init-val=proxy.count></on-to-me>
         <span -text-content></span> drinks sold.
@@ -38,7 +38,8 @@
         <button onclick="setCount()">Set count to 2000</button>
         <script>
             function setCount(){
-                butterBeerCounter.setAttribute('be-a-butterbeer-counter', '{"count": 2000}');
+                //butterBeerCounter.setAttribute('be-a-butterbeer-counter', '{"count": 2000}');
+                proxyDecor.proxy.count = 2000;
             }
         </script>
         <script type=importmap>
