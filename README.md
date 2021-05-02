@@ -10,11 +10,13 @@
 
 xtal-decor provides a base class which enables attaching ES6 proxies onto other "Shadow DOM peer citizens" -- native DOM or custom elements in the same Shadow DOM realm.
 
-xtal-decor provides a much more "conservative" alternative approach to enhancing existing DOM elements, in place of the controversial customized built-in element [standard-ish](https://bkardell.com/blog/TheWalrus.html).
+xtal-decor provides a much more "conservative" alternative approach to enhancing existing DOM elements, in place of the controversial "is"-based customized built-in element [standard-ish](https://bkardell.com/blog/TheWalrus.html).
 
-Like [xtal-deco](https://github.com/bahrus/xtal-deco), properties "init", "on" and "actions" allow you to define the behavior of the ES6 proxy with a minimum of fuss.  And the property "virtualProps" is also supported, which allows you to define properties that aren't already part of the native DOM element or custom element you are enhancing.  Use of virtualProps is critical if you want to be guaranteed that your component doesn't break, should the native DOM element or custom element be enhanced with a new property with the same name.
+Like [xtal-deco](https://github.com/bahrus/xtal-deco), properties "init", "on" and "actions" allow us to define the behavior of the ES6 proxy with a minimum of fuss.  And the property "virtualProps" is also supported, which allows us to define properties that aren't already part of the native DOM element or custom element we are enhancing.  
 
-xtal-decor provides the base class and web component.  Like xtal-deco, we can "informally" define a new behavior by using an inline script via something like [nomodule](https://github.com/bahrus/nomodule)
+Use of virtualProps is critical if you want to be guaranteed that your component doesn't break, should the native DOM element or custom element be enhanced with a new property with the same name.
+
+xtal-decor provides the base class and web component.  Like xtal-deco, we can avoid having to inherit from this class, instead "informally" defining a new behavior by using an inline script via something like [nomodule](https://github.com/bahrus/nomodule):
 
 ```html
 <xtal-decor upgrade=button if-wants-to-be=a-butterbeer-counter virtual-props='["count"]'><script nomodule=ish>
@@ -50,7 +52,7 @@ xtal-decor provides the base class and web component.  Like xtal-deco, we can "i
 
 A more "formal" way of defining new behavior is to extend the base class XtalDecor, and to set the "virtualProps", "actions", "on" and/or "init" properties during field initialization or in the constructor.  You can then define a custom element with any name you want using your extended class.  
 
-An instance of your custom element needs to be added somewhere in the shadowDOM realm where you want it to affect behavior (or outside any ShadowDOM Realm to affect elements outside any ShadowDOM).
+An instance of your custom element needs to be added somewhere in the shadowDOM realm where you want it to affect behavior (or outside any Shadow DOM Realm to affect elements outside any Shadow DOM).
 
 The attributes of your instance tag needs to define what element (optional - use * for all elements) and attribute (required) to look for.
 
@@ -79,42 +81,16 @@ For example:
     ></black-eyed-peas>
 ```
 
-<!--
-
-## Property Forwarding with a light touch:
-
-Since we don't want to pollute the native DOM element (or custom element) we are enhancing with properties it doesn't know about (which could become actual properties in the future), we need a way of passing properties directly to the proxy (which uses a WeakMap for the virtual properties so it should be future-safe.)
-
-For that, make use of the reserved tag-name "proxy-props".  You can pass properties to the proxy-props tag, and those properties will be auto-forwarded to the proxy.
-
-```html
-<make-expandable upgrade=details if-wants-to-be=all-expandable auto-forward></make-expandable>
-<make-collapsible upgrade=details if-wants-to-be=all-collapsible auto-forward></make-collapsible>
-
-...
-
-<proxy-props id=expandableProxy for=all-expandable></proxy-props>
-<proxy-props for=all-collapsible></proxy-props>
-<details be-all-expandable be-all-collapsible>
-    <summary>...</summary>
-    ...
-    <details>
-    ...
-    </details>
-</details>
-
-<script>
-expandableProxy.expandAll = true;
-</script>
-```
-
--->
 
 ## Setting properties of the proxy externally
 
-The tricky thing about proxies is they're great if you have access to them, useless if you don't.
+Just as we need to be able to pass property values to custom elements, we need a way to do this with xtal-decor.  But how?
 
-If we need to modify a property of a proxy, we can do that via the xtal-decor element, or the element extending xtal-decor:
+The tricky thing about proxies is they're great if you have access to them, useless if you don't.  
+
+###  Approach I.  Programmatically (Ugly)
+
+If you need to modify a property of a proxy, you can do that via the xtal-decor element, or the element extending xtal-decor:
 
 ```html
 <xtal-decor id=decor upgrade=button if-wants-to-be=a-butterbeer-counter virtual-props='["count"]'>
@@ -134,7 +110,7 @@ If we need to modify a property of a proxy, we can do that via the xtal-decor el
 </script>
 ```
 
-## Setting properties via attribute:
+###  Approach II. Setting properties via the controlling attribute:
 
 A more elegant solution, perhaps, which xtal-decor supports, is to pass in properties via its custom attribute:
 
@@ -172,7 +148,6 @@ After list-sorter does its thing, the attribute "be-sorted" switches to "is-sort
 You cannot pass in new values by using the is-sorted attribute.  Instead, you need to continue to use the be-sorted attribute:
 
 
-
 ```html
 
 <ul id=list is-sorted='{"direction":"asc","nodeSelectorToSortOn":"span"}'>
@@ -188,6 +163,48 @@ You cannot pass in new values by using the is-sorted attribute.  Instead, you ne
     list.setAttribute('be-sorted', JSON.stringify({direction: 'desc'}))
 </script>
 
+```
+
+## Approach III.  Proxy Forwarding with a Light Touch
+
+A reusable component, [https://github.com/bahrus/proxy-decor](proxy-decor) serves as a useful companion to xtal-decor. Whereas xtal-decor can have specialized logic (either via prop setting or class extension), proxy-decor is very light-weight and generic.  Think of it like a very [thin client](https://www.dell.com/premier/us/en/RC1378895?gacd=9684689-1077-5763017-265940558-0&dgc=st&gclid=9f0071f121cb1a930be2117f5bd9e116&gclsrc=3p.ds&msclkid=9f0071f121cb1a930be2117f5bd9e116#/systems/cloud-client-computing) to a remote, fully loaded desktop/server/VM, sitting in some well-ventilated server room.
+
+proxy-decor not only allows properties to be passed in to the proxy, it also raises custom events after any property of the proxy changes.
+
+Sample syntax:
+
+```html
+<xtal-decor upgrade=button if-wants-to-be=a-butterbeer-counter auto-forward virtual-props='["count"]'><script nomodule=ish>
+    const decoProps = {
+        actions: [
+            ({count, self}) => {
+                window.alert(count + " butterbeers sold");
+            }
+        ],
+        on: {
+            'click': ({self}) => {
+                console.log(self);
+                self.count++;
+            }
+        },
+        init: ({self}) =>{
+            self.count = 0;
+        }
+    }
+    Object.assign(selfish.parentElement, decoProps);
+</script></xtal-decor>
+
+<proxy-decor id=proxyDecor for=a-butterbeer-counter ></proxy-decor>
+<button id=butterBeerCounter be-a-butterbeer-counter='{"count": 1000}' disabled>Click Me to Order Your Drink</button>
+<on-to-me observe="proxy-decor" on="count-changed" to=[-text-content] me=1 val=target.proxy.count init-val=proxy.count init-event=initialized></on-to-me>
+<span -text-content></span> drinks sold.
+
+<button onclick="setCount()">Set count to 2000</button>
+<script>
+    function setCount(){
+        proxyDecor.proxy.count = 2000;
+    }
+</script>
 ```
 
 
