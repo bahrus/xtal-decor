@@ -2,10 +2,29 @@
   "name": "xtal-decor",
   "version": "0.0.29",
   "description": "Enables attaching ES6 proxies onto other Shadow DOM peer citizens",
+  "keywords": [
+    "webcomponents",
+    "webcomponent",
+    "customelements",
+    "customelement",
+    "built-in",
+    "proxy"
+  ],
   "main": "xtal-decor.js",
   "module": "xtal-decor.js",
+  "exports": {
+    ".": "./xtal-decor.js",
+    "./xtal-decor.js": "./xtal-decor.js"
+  },
+  "files": [
+    "xtal-decor.*",
+    "types.d.ts",
+    "upgrade.*"
+  ],
+  "types": "./types.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "package-check": "package-check",
     "serve": "node node_modules/xtal-test/serve.js"
   },
   "repository": {
@@ -18,6 +37,7 @@
     "xtal-element": "0.0.389"
   },
   "devDependencies": {
+    "@skypack/package-check": "0.2.2",
     "nomodule": "0.0.11",
     "on-to-me": "0.0.21",
     "proxy-decor": "0.0.3",
