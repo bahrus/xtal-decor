@@ -204,6 +204,7 @@ const doAutoForward = ({newForwarder, upgrade, ifWantsToBe, initializedSym, targ
     };
     const proxy = targetToProxyMap.get(el);
     (<any>newForwarder).proxy = proxy;
+    newForwarder!.dispatchEvent(new Event('initialized'));
     if(newForwarder === undefined) return;
 };
 

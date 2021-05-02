@@ -13,14 +13,13 @@
     "url": "git+https://github.com/bahrus/xtal-decor.git"
   },
   "dependencies": {
-    "css-observe": "0.0.39",
-    "trans-render": "0.0.283",
-    "xtal-element": "0.0.373"
+    "css-observe": "0.0.40",
+    "trans-render": "0.0.286",
+    "xtal-element": "0.0.389"
   },
   "devDependencies": {
-    "es-dev-server": "2.1.0",
-    "nomodule": "0.0.10",
-    "on-to-me": "0.0.17",
+    "nomodule": "0.0.11",
+    "on-to-me": "0.0.21",
     "proxy-decor": "0.0.3",
     "xtal-test": "0.0.50"
   },

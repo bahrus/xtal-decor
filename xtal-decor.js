@@ -169,6 +169,7 @@ const doAutoForward = ({ newForwarder, upgrade, ifWantsToBe, initializedSym, tar
     ;
     const proxy = targetToProxyMap.get(el);
     newForwarder.proxy = proxy;
+    newForwarder.dispatchEvent(new Event('initialized'));
     if (newForwarder === undefined)
         return;
 };
