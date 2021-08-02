@@ -12,11 +12,12 @@ export class XtalDecor extends HTMLElement {
         this.propActions = propActions;
         this.reactor = new xc.Rx(this);
         this.targetToProxyMap = new WeakMap();
+        //proxyToSubscriberMap: WeakMap<any, Subscription[]> = new WeakMap();
         this.initializedSym = Symbol();
     }
     connectedCallback() {
         this.style.display = 'none';
-        xc.hydrate(this, slicedPropDefs);
+        xc.mergeProps(this, slicedPropDefs);
     }
     onPropChange(n, propDef, newVal) {
         this.reactor.addToQueue(propDef, newVal);

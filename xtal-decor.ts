@@ -1,6 +1,6 @@
 import { upgrade as upgr, getAttrInfo} from './upgrade.js';
-import { TargetProxyPair, Subscription } from './types.d.js';
-export { SelfReferentialHTMLElement, Subscription} from './types.d.js';
+import { TargetProxyPair, Subscription, XtalDecorProps } from './types.d.js';
+export { SelfReferentialHTMLElement, Subscription, XtalDecorProps} from './types.d.js';
 import { xc,PropAction,PropDef,PropDefMap,ReactiveSurface, IReactor } from 'xtal-element/lib/XtalCore.js';
 import { EventSettings } from 'xtal-element/types.d.js';
 import { getDestructArgs } from 'xtal-element/lib/getDestructArgs.js';
@@ -15,49 +15,23 @@ export class XtalDecor<TTargetElement extends Element = HTMLElement> extends HTM
     propActions = propActions;
     reactor: IReactor = new xc.Rx(this);
 
-
-
-    upgrade: string | undefined;
-
-    ifWantsToBe: string | undefined;
-
-    init: PropAction<TTargetElement> | undefined;
-
-    actions: PropAction<any>[] | undefined;
-
-    on: EventSettings | undefined;
-
-    capture: EventSettings | undefined;
-
-    newTarget: TTargetElement | undefined;
-
-    newForwarder: HTMLElement | undefined;
-
-    newTargetProxyPair: TargetProxyPair<TTargetElement> | undefined;
-
     targetToProxyMap: WeakMap<any, any> = new WeakMap();
     //proxyToSubscriberMap: WeakMap<any, Subscription[]> = new WeakMap();
 
-    autoForward: boolean | undefined;
-
     initializedSym = Symbol();
-
-    /**
-     * Set these properties via a WeakMap, rather than on the (native) element itself.
-     */
-    virtualProps: string[] | undefined;
 
     connectedCallback(){
         this.style.display = 'none';
-        xc.hydrate(this, slicedPropDefs);
+        xc.mergeProps(this, slicedPropDefs);
     }
     onPropChange(n: string, propDef: PropDef, newVal: any){
         this.reactor.addToQueue(propDef, newVal);
     }
 
-
-
 }
+
+export interface XtalDecor extends XtalDecorProps{}
+
 export function hasUndefined(arr: any[]){
     return arr.includes(undefined);
 }

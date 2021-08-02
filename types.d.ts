@@ -1,3 +1,32 @@
+import {PropAction, EventSettings} from 'xtal-element/types.d.js';
+
+export interface XtalDecorProps<TTargetElement extends Element = HTMLElement>  {
+    upgrade: string | undefined;
+
+    ifWantsToBe: string | undefined;
+
+    init: PropAction<TTargetElement> | undefined;
+
+    actions: PropAction<any>[] | undefined;
+
+    on: EventSettings | undefined;
+
+    capture: EventSettings | undefined;
+
+    newTarget: TTargetElement | undefined;
+
+    newForwarder: HTMLElement | undefined;
+
+    newTargetProxyPair: TargetProxyPair<TTargetElement> | undefined;
+
+    autoForward: boolean | undefined;
+
+        /**
+     * Set these properties via a WeakMap, rather than on the (native) element itself.
+     */
+         virtualProps: string[] | undefined;
+}
+
 export interface UpgradeArg<T extends Object>{
     /**
      * Apply trait to all elements within the specified ShadowDOM realm.  
