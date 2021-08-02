@@ -211,8 +211,8 @@ Sample syntax [TODO]:
 <button onclick="setCount()">Set count to 2000</button>
 <script>
     function setCount(){
-        const butterBeerCounter = proxyDecor.aBtterBeerCounter ?? {};
-        butterBeerCounter.count = 2000;
+        const bbc = (proxyDecor.aButterBeerCounter ??= {});
+        bbc.count = 2000;
     }
 </script>
 ```
