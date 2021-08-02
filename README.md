@@ -167,11 +167,11 @@ You cannot pass in new values by using the is-sorted attribute.  Instead, you ne
 
 ## Approach III.  Proxy Forwarding with a Light Touch
 
-A reusable component, [https://github.com/bahrus/proxy-decor](proxy-decor) serves as a useful companion to xtal-decor. Whereas xtal-decor can have specialized logic (either via prop setting or class extension), proxy-decor is very light-weight and generic.  Think of it like a very [thin client](https://www.dell.com/premier/us/en/RC1378895?gacd=9684689-1077-5763017-265940558-0&dgc=st&gclid=9f0071f121cb1a930be2117f5bd9e116&gclsrc=3p.ds&msclkid=9f0071f121cb1a930be2117f5bd9e116#/systems/cloud-client-computing) to a remote, fully loaded desktop/server/VM, sitting in some well-ventilated server room.
+A reusable component, [https://github.com/bahrus/proxy-decor](proxy-decor) serves as a useful companion to xtal-decor. Whereas xtal-decor can have specialized logic (either via prop setting or class extension), proxy-decor is very light-weight and generic.  Think of it like a very [thin client](https://www.dell.com/premier/us/en/RC1378895?gacd=9684689-1077-5763017-265940558-0&dgc=st&gclid=9f0071f121cb1a930be2117f5bd9e116&gclsrc=3p.ds&msclkid=9f0071f121cb1a930be2117f5bd9e116#/systems/cloud-client-computing) that easily connect to / switch to different remote, fully loaded desktop/server/VM, sitting in some well-ventilated server room.
 
 proxy-decor not only allows properties to be passed in to the proxy, it also raises custom events after any property of the proxy changes.
 
-Sample syntax:
+Sample syntax [TODO]:
 
 ```html
 <xtal-decor upgrade=button if-wants-to-be=a-butterbeer-counter auto-forward virtual-props='["count"]'><script nomodule=ish>
@@ -194,18 +194,34 @@ Sample syntax:
     Object.assign(selfish.parentElement, decoProps);
 </script></xtal-decor>
 
-<proxy-decor id=proxyDecor for=a-butterbeer-counter ></proxy-decor>
-<button id=butterBeerCounter be-a-butterbeer-counter='{"count": 1000}' disabled>Click Me to Order Your Drink</button>
-<on-to-me observe="proxy-decor" on="count-changed" to=[-text-content] me=1 val=target.proxy.count init-val=proxy.count init-event=initialized></on-to-me>
+
+<button id=butterBeerCounter be-a-butterbeer-counter='{"count": 1000}' disabled>
+    Click Me to Order Your Drink
+</button>
+<proxy-decor id=proxyDecor for=[be-a-butterbeer-counter]></proxy-decor>
+<pass-down
+    on="a-butterbeer-counter:count-changed" 
+    to=[-text-content] 
+    m=1 
+    val-from-target=aButterBeerCounter.count
+    init-event=a-butterbeer-counter:initialized>
+</pass-down>
 <span -text-content></span> drinks sold.
 
 <button onclick="setCount()">Set count to 2000</button>
 <script>
     function setCount(){
-        proxyDecor.proxy.count = 2000;
+        const butterBeerCounter = proxyDecor.aBtterBeerCounter ?? {};
+        butterBeerCounter.count = 2000;
     }
 </script>
 ```
+
+proxy-decor:
+
+1.  Does an upsearch for the first previous element matching [a-butterbeer-counter].
+2.  Multiple attributes can be upsearched (comma-delimited for attribute), which will handle to appropriate proxy
+
 
 ## [Demo](https://codepen.io/bahrus/pen/XWpvmZr)
 
