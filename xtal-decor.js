@@ -27,10 +27,15 @@ const obj3 = {
     ...obj1,
     stopReactionsIfFalsy: true,
 };
+const obj4 = {
+    ...obj1,
+    parse: true,
+};
 export const propDefMap = {
     upgrade: str1, ifWantsToBe: str1,
     on: obj1, newTarget: obj2, init: obj1, targetToProxyMap: obj1, actions: obj1, newTargetProxyPair: obj1, newForwarder: obj3, capture: obj1,
     newTargetId: str2,
+    virtualProps: obj4,
 };
 const slicedPropDefs = xc.getSlicedPropDefs(propDefMap);
 //#endregion
@@ -56,7 +61,7 @@ export class XtalDecor extends HTMLElement {
     }
 }
 XtalDecor.is = 'xtal-decor';
-XtalDecor.observedAttributes = [...slicedPropDefs.boolNames, ...slicedPropDefs.strNames];
+XtalDecor.observedAttributes = [...slicedPropDefs.boolNames, ...slicedPropDefs.strNames, ...slicedPropDefs.parseNames];
 export function hasUndefined(arr) {
     return arr.includes(undefined);
 }

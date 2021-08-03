@@ -34,10 +34,15 @@ const obj3: PropDef={
     ...obj1,
     stopReactionsIfFalsy: true,
 }
+const obj4: PropDef = {
+    ...obj1,
+    parse: true,
+};
 export const propDefMap: PropDefMap<XtalDecor> = {
     upgrade: str1, ifWantsToBe: str1,
     on: obj1, newTarget: obj2, init: obj1, targetToProxyMap: obj1, actions: obj1, newTargetProxyPair: obj1, newForwarder: obj3, capture: obj1,
     newTargetId: str2,
+    virtualProps: obj4,
 };
 const slicedPropDefs = xc.getSlicedPropDefs(propDefMap);
 //#endregion
@@ -48,7 +53,7 @@ const slicedPropDefs = xc.getSlicedPropDefs(propDefMap);
  */
 export class XtalDecor<TTargetElement extends Element = HTMLElement> extends HTMLElement implements ReactiveSurface{
     static is = 'xtal-decor';
-    static observedAttributes = [...slicedPropDefs.boolNames, ...slicedPropDefs.strNames]
+    static observedAttributes = [...slicedPropDefs.boolNames, ...slicedPropDefs.strNames, ...slicedPropDefs.parseNames];
     self = this;
     propActions = propActions;
     reactor: IReactor = new xc.Rx(this);
