@@ -109,10 +109,12 @@ export const linkNewTargetProxyPair = ({ actions, self, virtualProps, targetToPr
             });
             switch (typeof key) { //TODO:  remove this in favor of prop subscribers.
                 case 'string':
+                    const isVirtual = self.virtualProps?.includes(key);
                     target.dispatchEvent(new CustomEvent(eventName, {
                         detail: {
                             key,
                             ifWantsToBe,
+                            isVirtual,
                             value
                         }
                     }));
