@@ -219,6 +219,7 @@ proxy-decor:
 
 1.  Does an id search within the shadow dom realm (like label for).
 2.  Multiple proxies are fronted by a single proxy-decor tag.
+3.  Event names are namespaced only for virtual properties.
 
 
 ## [Demo](https://codepen.io/bahrus/pen/XWpvmZr)
