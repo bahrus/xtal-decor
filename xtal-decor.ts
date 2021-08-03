@@ -6,6 +6,7 @@ import { EventSettings } from 'xtal-element/types.d.js';
 import { getDestructArgs } from 'xtal-element/lib/getDestructArgs.js';
 import { lispToCamel } from 'trans-render/lib/lispToCamel.js';
 
+
 export const eventName = 'yzDz0XScOUWhk/CI+tT4vg';
 
 //#region Props
@@ -199,32 +200,34 @@ const linkForwarder = ({newTargetId, self}: XtalDecor) => {
 }
 
 //https://gomakethings.com/finding-the-next-and-previous-sibling-elements-that-match-a-selector-with-vanilla-js/
-function getNextSibling (elem: Element, selector: string | undefined) {
+// function getNextSibling (elem: Element, selector: string | undefined) {
 
-	// Get the next sibling element
-    var sibling = elem.nextElementSibling;
-    if(selector === undefined) return sibling;
+// 	// Get the next sibling element
+//     var sibling = elem.nextElementSibling;
+//     if(selector === undefined) return sibling;
 
-	// If the sibling matches our selector, use it
-	// If not, jump to the next sibling and continue the loop
-	while (sibling) {
-		if (sibling.matches(selector)) return sibling;
-		sibling = sibling.nextElementSibling
-	}
-    return sibling;
-};
+// 	// If the sibling matches our selector, use it
+// 	// If not, jump to the next sibling and continue the loop
+// 	while (sibling) {
+// 		if (sibling.matches(selector)) return sibling;
+// 		sibling = sibling.nextElementSibling
+// 	}
+//     return sibling;
+// };
 
 const doAutoForward = ({newForwarder, self}: XtalDecor) => {
     let rn = self.getRootNode() as Element;
     if(rn.nodeType === 9) rn = document.body;
     const el = rn.querySelector('#' + rn.getAttribute('for'));
     if(el === null) return;
+    //const anyNewForwarder = newForwarder as any;
     const ifWantsToBe = self.ifWantsToBe!;
-    const propName = lispToCamel(ifWantsToBe!);
-    const originalVal = (<any>newForwarder)[propName];
+    const proxyName = lispToCamel(ifWantsToBe!);
+    //const originalVal = (<any>newForwarder)[propName];
     const proxy = self.targetToProxyMap.get(el);
-    if(originalVal !== undefined) Object.assign(proxy, originalVal);
-    (<any>newForwarder)[propName] = proxy;
+    newForwarder!.setProxy(proxy, proxyName);
+    //if(originalVal !== undefined) Object.assign(proxy, originalVal);
+    //(anyNewForwarder)[propName] = proxy;
     newForwarder!.dispatchEvent(new Event(`${ifWantsToBe}:initialized`));
 };
 

@@ -1,4 +1,5 @@
 import {PropAction, EventSettings} from 'xtal-element/types.d.js';
+import { ProxyDecorMethods } from 'proxy-decor/types.d.js';
 
 export interface XtalDecorProps<TTargetElement extends Element = HTMLElement>  {
     upgrade: string | undefined;
@@ -17,7 +18,7 @@ export interface XtalDecorProps<TTargetElement extends Element = HTMLElement>  {
 
     newTargetId: string | undefined;
 
-    newForwarder: HTMLElement | undefined;
+    newForwarder: ProxyDecorMethods | undefined;
 
     newTargetProxyPair: TargetProxyPair<TTargetElement> | undefined;
 

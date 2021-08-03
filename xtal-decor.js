@@ -187,21 +187,18 @@ const linkForwarder = ({ newTargetId, self }) => {
     self.appendChild(observer);
 };
 //https://gomakethings.com/finding-the-next-and-previous-sibling-elements-that-match-a-selector-with-vanilla-js/
-function getNextSibling(elem, selector) {
-    // Get the next sibling element
-    var sibling = elem.nextElementSibling;
-    if (selector === undefined)
-        return sibling;
-    // If the sibling matches our selector, use it
-    // If not, jump to the next sibling and continue the loop
-    while (sibling) {
-        if (sibling.matches(selector))
-            return sibling;
-        sibling = sibling.nextElementSibling;
-    }
-    return sibling;
-}
-;
+// function getNextSibling (elem: Element, selector: string | undefined) {
+// 	// Get the next sibling element
+//     var sibling = elem.nextElementSibling;
+//     if(selector === undefined) return sibling;
+// 	// If the sibling matches our selector, use it
+// 	// If not, jump to the next sibling and continue the loop
+// 	while (sibling) {
+// 		if (sibling.matches(selector)) return sibling;
+// 		sibling = sibling.nextElementSibling
+// 	}
+//     return sibling;
+// };
 const doAutoForward = ({ newForwarder, self }) => {
     let rn = self.getRootNode();
     if (rn.nodeType === 9)
@@ -209,13 +206,14 @@ const doAutoForward = ({ newForwarder, self }) => {
     const el = rn.querySelector('#' + rn.getAttribute('for'));
     if (el === null)
         return;
+    //const anyNewForwarder = newForwarder as any;
     const ifWantsToBe = self.ifWantsToBe;
-    const propName = lispToCamel(ifWantsToBe);
-    const originalVal = newForwarder[propName];
+    const proxyName = lispToCamel(ifWantsToBe);
+    //const originalVal = (<any>newForwarder)[propName];
     const proxy = self.targetToProxyMap.get(el);
-    if (originalVal !== undefined)
-        Object.assign(proxy, originalVal);
-    newForwarder[propName] = proxy;
+    newForwarder.setProxy(proxy, proxyName);
+    //if(originalVal !== undefined) Object.assign(proxy, originalVal);
+    //(anyNewForwarder)[propName] = proxy;
     newForwarder.dispatchEvent(new Event(`${ifWantsToBe}:initialized`));
 };
 export const propActions = [linkUpgradeProxyPair, linkNewTargetProxyPair, initializeProxy, linkForwarder, doAutoForward];
