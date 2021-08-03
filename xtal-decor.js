@@ -203,7 +203,7 @@ const doAutoForward = ({ newForwarder, self }) => {
     let rn = self.getRootNode();
     if (rn.nodeType === 9)
         rn = document.body;
-    const el = rn.querySelector('#' + rn.getAttribute('for'));
+    const el = rn.querySelector('#' + newForwarder.getAttribute('for'));
     if (el === null)
         return;
     //const anyNewForwarder = newForwarder as any;

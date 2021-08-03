@@ -218,7 +218,7 @@ const linkForwarder = ({newTargetId, self}: XtalDecor) => {
 const doAutoForward = ({newForwarder, self}: XtalDecor) => {
     let rn = self.getRootNode() as Element;
     if(rn.nodeType === 9) rn = document.body;
-    const el = rn.querySelector('#' + rn.getAttribute('for'));
+    const el = rn.querySelector('#' + newForwarder!.getAttribute('for'));
     if(el === null) return;
     //const anyNewForwarder = newForwarder as any;
     const ifWantsToBe = self.ifWantsToBe!;

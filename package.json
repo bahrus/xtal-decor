@@ -40,7 +40,7 @@
     "@skypack/package-check": "0.2.2",
     "nomodule": "0.0.15",
     "pass-down": "0.0.74",
-    "proxy-decor": "0.0.5",
+    "proxy-decor": "0.0.7",
     "xtal-test": "0.0.51"
   },
   "author": "anderson.bruce.b@gmail.com",

@@ -8,7 +8,8 @@ export function upgrade<T extends EventTarget>(args: UpgradeArg<T>, callback?: (
 }
 
 function monitor<T extends EventTarget>(id: string, beAttrib: string, args: UpgradeArg<T>, callback?: (t: T) => void){
-    addCSSListener(id, args.shadowDomPeer, `${args.upgrade}[${beAttrib}],${args.upgrade}[data-${beAttrib}]`, (e: Event) => {
+    addCSSListener(id, args.shadowDomPeer, `${args.upgrade}[${beAttrib}],${args.upgrade}[data-${beAttrib}]`, (e: AnimationEvent) => {
+        if(e.animationName !== id) return;
         const target = e.target;
         const val = getAttrInfo(target as Element, args.ifWantsToBe, false);
         if(val === null) {

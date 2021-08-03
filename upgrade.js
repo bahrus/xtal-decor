@@ -6,6 +6,8 @@ export function upgrade(args, callback) {
 }
 function monitor(id, beAttrib, args, callback) {
     addCSSListener(id, args.shadowDomPeer, `${args.upgrade}[${beAttrib}],${args.upgrade}[data-${beAttrib}]`, (e) => {
+        if (e.animationName !== id)
+            return;
         const target = e.target;
         const val = getAttrInfo(target, args.ifWantsToBe, false);
         if (val === null) {
