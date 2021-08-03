@@ -1,5 +1,5 @@
 import { upgrade as upgr, getAttrInfo} from './upgrade.js';
-import { TargetProxyPair, Subscription, XtalDecorProps } from './types.d.js';
+import { TargetProxyPair, Subscription, XtalDecorProps, ProxyEventDetail } from './types.d.js';
 export { SelfReferentialHTMLElement, Subscription, XtalDecorProps} from './types.d.js';
 import { xc,PropAction,PropDef,PropDefMap,ReactiveSurface, IReactor } from 'xtal-element/lib/XtalCore.js';
 import { EventSettings } from 'xtal-element/types.d.js';
@@ -37,11 +37,6 @@ export const propDefMap: PropDefMap<XtalDecor> = {
     upgrade: str1, ifWantsToBe: str1,
     on: obj1, newTarget: obj2, init: obj1, targetToProxyMap: obj1, actions: obj1, newTargetProxyPair: obj1, newForwarder: obj3, capture: obj1,
     newTargetId: str2,
-    // autoForward:{
-    //     type: Boolean,
-    //     dry: true,
-    //     stopReactionsIfFalsy: true,
-    // },
 };
 const slicedPropDefs = xc.getSlicedPropDefs(propDefMap);
 //#endregion
@@ -120,14 +115,15 @@ export const linkNewTargetProxyPair = ({actions, self, virtualProps, targetToPro
             });
             switch(typeof key){ //TODO:  remove this in favor of prop subscribers.
                 case 'string':
-                    const isVirtual =  self.virtualProps?.includes(key);
+                    const isVirtualProp =  self.virtualProps?.includes(key) === true;
+                    const detail: ProxyEventDetail = {
+                        prop: key,
+                        isVirtualProp,
+                        customAttr: ifWantsToBe!,
+                        value
+                    };
                     target.dispatchEvent(new CustomEvent(eventName, {
-                        detail:{
-                            key,
-                            ifWantsToBe,
-                            isVirtual,
-                            value
-                        }
+                        detail
                     }));
                     break;
             }

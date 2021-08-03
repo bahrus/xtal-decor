@@ -31,11 +31,6 @@ export const propDefMap = {
     upgrade: str1, ifWantsToBe: str1,
     on: obj1, newTarget: obj2, init: obj1, targetToProxyMap: obj1, actions: obj1, newTargetProxyPair: obj1, newForwarder: obj3, capture: obj1,
     newTargetId: str2,
-    // autoForward:{
-    //     type: Boolean,
-    //     dry: true,
-    //     stopReactionsIfFalsy: true,
-    // },
 };
 const slicedPropDefs = xc.getSlicedPropDefs(propDefMap);
 //#endregion
@@ -109,14 +104,15 @@ export const linkNewTargetProxyPair = ({ actions, self, virtualProps, targetToPr
             });
             switch (typeof key) { //TODO:  remove this in favor of prop subscribers.
                 case 'string':
-                    const isVirtual = self.virtualProps?.includes(key);
+                    const isVirtualProp = self.virtualProps?.includes(key) === true;
+                    const detail = {
+                        prop: key,
+                        isVirtualProp,
+                        customAttr: ifWantsToBe,
+                        value
+                    };
                     target.dispatchEvent(new CustomEvent(eventName, {
-                        detail: {
-                            key,
-                            ifWantsToBe,
-                            isVirtual,
-                            value
-                        }
+                        detail
                     }));
                     break;
             }

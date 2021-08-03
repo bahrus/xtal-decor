@@ -29,6 +29,13 @@ export interface XtalDecorProps<TTargetElement extends Element = HTMLElement>  {
     virtualProps: string[] | undefined;
 }
 
+export interface ProxyEventDetail{
+    customAttr: string,
+    prop: string,
+    isVirtualProp: boolean
+    value: any,
+}
+
 export interface UpgradeArg<T extends Object>{
     /**
      * Apply trait to all elements within the specified ShadowDOM realm.  
