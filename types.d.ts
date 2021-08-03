@@ -15,16 +15,18 @@ export interface XtalDecorProps<TTargetElement extends Element = HTMLElement>  {
 
     newTarget: TTargetElement | undefined;
 
+    newTargetId: string | undefined;
+
     newForwarder: HTMLElement | undefined;
 
     newTargetProxyPair: TargetProxyPair<TTargetElement> | undefined;
 
-    autoForward: boolean | undefined;
+    //autoForward: boolean | undefined;
 
-        /**
+    /**
      * Set these properties via a WeakMap, rather than on the (native) element itself.
      */
-         virtualProps: string[] | undefined;
+    virtualProps: string[] | undefined;
 }
 
 export interface UpgradeArg<T extends Object>{

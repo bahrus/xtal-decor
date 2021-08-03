@@ -4,19 +4,60 @@ export { SelfReferentialHTMLElement, Subscription, XtalDecorProps} from './types
 import { xc,PropAction,PropDef,PropDefMap,ReactiveSurface, IReactor } from 'xtal-element/lib/XtalCore.js';
 import { EventSettings } from 'xtal-element/types.d.js';
 import { getDestructArgs } from 'xtal-element/lib/getDestructArgs.js';
+import { lispToCamel } from 'trans-render/lib/lispToCamel.js';
 
 export const eventName = 'yzDz0XScOUWhk/CI+tT4vg';
+
+//#region Props
+const str0: PropDef = {
+    type: String,
+    dry: true
+}
+const str1: PropDef = {
+    ...str0,
+    reflect: true,
+};
+const str2: PropDef = {
+    ...str0,
+    stopReactionsIfFalsy: true,
+};
+
+const obj1: PropDef = {
+    type: Object,
+    dry: true
+};
+const obj2: PropDef = {
+    type: Object,
+};
+const obj3: PropDef={
+    ...obj1,
+    stopReactionsIfFalsy: true,
+}
+export const propDefMap: PropDefMap<XtalDecor> = {
+    upgrade: str1, ifWantsToBe: str1,
+    on: obj1, newTarget: obj2, init: obj1, targetToProxyMap: obj1, actions: obj1, newTargetProxyPair: obj1, newForwarder: obj3, capture: obj1,
+    newTargetId: str2,
+    // autoForward:{
+    //     type: Boolean,
+    //     dry: true,
+    //     stopReactionsIfFalsy: true,
+    // },
+};
+const slicedPropDefs = xc.getSlicedPropDefs(propDefMap);
+//#endregion
+
 /**
  * @element xtal-decor
+ * @tag xtal-decor
  */
 export class XtalDecor<TTargetElement extends Element = HTMLElement> extends HTMLElement implements ReactiveSurface{
     static is = 'xtal-decor';
+    static observedAttributes = [...slicedPropDefs.boolNames, ...slicedPropDefs.strNames]
     self = this;
     propActions = propActions;
     reactor: IReactor = new xc.Rx(this);
 
     targetToProxyMap: WeakMap<any, any> = new WeakMap();
-    //proxyToSubscriberMap: WeakMap<any, Subscription[]> = new WeakMap();
 
     initializedSym = Symbol();
 
@@ -81,8 +122,9 @@ export const linkNewTargetProxyPair = ({actions, self, virtualProps, targetToPro
                 case 'string':
                     target.dispatchEvent(new CustomEvent(eventName, {
                         detail:{
-                            key: key,
-                            value: value
+                            key,
+                            ifWantsToBe,
+                            value
                         }
                     }));
                     break;
@@ -108,7 +150,11 @@ export const linkNewTargetProxyPair = ({actions, self, virtualProps, targetToPro
         proxy: proxy,
         target: newTarget
     }
+    const id = newTarget.id;
     delete self.newTarget;
+    if(id !== ''){
+        self.newTargetId = id;
+    }
 }
 
 const initializeProxy = ({newTargetProxyPair, init, self, on, capture, ifWantsToBe}: XtalDecor) => {
@@ -143,11 +189,11 @@ function addEvents(on: EventSettings | undefined, target: HTMLElement, proxy: HT
     }  
 }
 
-const linkForwarder = ({autoForward, ifWantsToBe, self}: XtalDecor) => {
+const linkForwarder = ({newTargetId, self}: XtalDecor) => {
     import('css-observe/css-observe.js');
     const observer = document.createElement('css-observe') as any;
     observer.observe = true;
-    observer.selector = `proxy-decor[for="${ifWantsToBe}"]`;
+    observer.selector = `proxy-decor[for="${newTargetId}"]`;
     observer.addEventListener('latest-match-changed', (e: Event) => {
         self.newForwarder = observer.latestMatch;
     });
@@ -170,45 +216,22 @@ function getNextSibling (elem: Element, selector: string | undefined) {
     return sibling;
 };
 
-const doAutoForward = ({newForwarder, upgrade, ifWantsToBe, initializedSym, targetToProxyMap, self}: XtalDecor) => {
-    const el = getNextSibling(newForwarder!, `${upgrade}[is-${ifWantsToBe}],${upgrade}[be-${ifWantsToBe}]`);
-    if(el === undefined || !targetToProxyMap.has(el)){
-        setTimeout(() => doAutoForward(self), 50);
-        return;
-    };
-    const proxy = targetToProxyMap.get(el);
-    (<any>newForwarder).proxy = proxy;
-    newForwarder!.dispatchEvent(new Event('initialized'));
-    if(newForwarder === undefined) return;
+const doAutoForward = ({newForwarder, self}: XtalDecor) => {
+    let rn = self.getRootNode() as Element;
+    if(rn.nodeType === 9) rn = document.body;
+    const el = rn.querySelector('#' + rn.getAttribute('for'));
+    if(el === null) return;
+    const ifWantsToBe = self.ifWantsToBe!;
+    const propName = lispToCamel(ifWantsToBe!);
+    const originalVal = (<any>newForwarder)[propName];
+    const proxy = self.targetToProxyMap.get(el);
+    if(originalVal !== undefined) Object.assign(proxy, originalVal);
+    (<any>newForwarder)[propName] = proxy;
+    newForwarder!.dispatchEvent(new Event(`${ifWantsToBe}:initialized`));
 };
 
 export const propActions = [linkUpgradeProxyPair, linkNewTargetProxyPair, initializeProxy, linkForwarder, doAutoForward] as PropAction<any>[];
-const str1: PropDef = {
-    type: String,
-    dry: true,
-    reflect: true,
-};
-const obj1: PropDef = {
-    type: Object,
-    dry: true
-};
-const obj2: PropDef = {
-    type: Object,
-};
-const obj3: PropDef={
-    ...obj1,
-    stopReactionsIfFalsy: true,
-}
-export const propDefMap: PropDefMap<XtalDecor> = {
-    upgrade: str1, ifWantsToBe: str1,
-    on: obj1, newTarget: obj2, init: obj1, targetToProxyMap: obj1, actions: obj1, newTargetProxyPair: obj1, newForwarder: obj3, capture: obj1,
-    autoForward:{
-        type: Boolean,
-        dry: true,
-        stopReactionsIfFalsy: true,
-    },
-};
-const slicedPropDefs = xc.getSlicedPropDefs(propDefMap);
+
 
 
 xc.letThereBeProps<XtalDecor>(XtalDecor, slicedPropDefs, 'onPropChange');

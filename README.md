@@ -38,9 +38,7 @@ xtal-decor provides the base class and web component.  Like xtal-deco, we can av
     Object.assign(selfish.parentElement, decoProps);
 </script></xtal-decor>
 
-<button id=butterBeerCounter be-a-butterbeer-counter='{"count": 1000}' disabled>Click me to Order Your Drink</button>
-<p-d on="count-changed" prop=textContent val=target.count></p-d>
-<span></span> drinks sold.
+<button id=myButton be-a-butterbeer-counter='{"count": 1000}' disabled>Click me to Order Your Drink</button>
 
 <button onclick="setCount()">Set count to 2000</button>
 <script>

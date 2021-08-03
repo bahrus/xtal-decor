@@ -32,14 +32,14 @@
     "url": "git+https://github.com/bahrus/xtal-decor.git"
   },
   "dependencies": {
-    "css-observe": "0.0.40",
-    "trans-render": "0.0.286",
-    "xtal-element": "0.0.389"
+    "css-observe": "0.0.45",
+    "trans-render": "0.0.291",
+    "xtal-element": "0.0.419"
   },
   "devDependencies": {
     "@skypack/package-check": "0.2.2",
     "nomodule": "0.0.15",
-    "on-to-me": "0.0.32",
+    "pass-down": "0.0.74",
     "proxy-decor": "0.0.5",
     "xtal-test": "0.0.51"
   },

@@ -29,9 +29,10 @@
         Object.assign(selfish.parentElement, decoProps);
     </script></xtal-decor>
 
-    <proxy-decor id=proxyDecor for=a-butterbeer-counter ></proxy-decor>
+    <proxy-decor for=butterBeerCounter></proxy-decor>
+    <pass-down on="a-butter-beer-counter:count-changed" to=[-text-content] m=1 val-from-target=aButterBeerCounter.count  init-event=initialized></on-to-me>
     <button id=butterBeerCounter be-a-butterbeer-counter='{"count": 1000}' disabled>Click Me to Order Your Drink</button>
-    <on-to-me observe="proxy-decor" on="count-changed" to=[-text-content] me=1 val=target.proxy.count init-val=proxy.count init-event=initialized></on-to-me>
+    
     <span -text-content></span> drinks sold.
 
     <button onclick="setCount()">Set count to 2000</button>
@@ -47,6 +48,8 @@
             "xtal-decor/": "../",
             "trans-render/": "../node_modules/trans-render/",
             "on-to-me/": "../node_modules/on-to-me/",
+            "pass-down/": "../node-modules/pass-down/",
+            "mut-obs/": "../node-modules/mut-obs/",
             "nomodule/": "../node_modules/nomodule/",
             "css-observe/": "../node_modules/css-observe/",
             "proxy-decor/": "../node_modules/proxy-decor/"
@@ -55,7 +58,7 @@
     </script>
     <script type=module>
         import '../xtal-decor.js';
-        import 'on-to-me/on-to-me.js';
+        import 'pass-down/pass-down.js';
         import 'proxy-decor/proxy-decor.js';
         import 'nomodule/no-module.js';
     </script>
