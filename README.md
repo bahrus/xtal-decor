@@ -198,7 +198,7 @@ Sample syntax [TODO]:
 <button id=butterBeerCounter be-a-butterbeer-counter='{"count": 1000}' disabled>
     Click Me to Order Your Drink
 </button>
-<proxy-decor id=proxyDecor for=[be-a-butterbeer-counter]></proxy-decor>
+<proxy-decor id=proxyDecor for=butterBeerCounter></proxy-decor>
 <pass-down
     on="a-butterbeer-counter:count-changed" 
     to=[-text-content] 
@@ -219,8 +219,8 @@ Sample syntax [TODO]:
 
 proxy-decor:
 
-1.  Does an upsearch for the first previous element matching [a-butterbeer-counter].
-2.  Multiple attributes can be upsearched (comma-delimited for attribute), which will handle to appropriate proxy
+1.  Does an id search within the shadow dom realm (like label for).
+2.  Multiple proxies are fronted by a single proxy-decor tag.
 
 
 ## [Demo](https://codepen.io/bahrus/pen/XWpvmZr)
