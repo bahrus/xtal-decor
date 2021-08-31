@@ -30,6 +30,14 @@ export interface XtalDecorProps<TTargetElement extends Element = HTMLElement>  {
     virtualProps: string[] | undefined;
 }
 
+export interface XtalDecorActions<TTargetElement extends Element = HTMLElement>{
+    watchForElementsToUpgrade(self: this): void;
+    pairTargetWithProxy(self: this): void;
+    initializeProxy(self: this): void;
+    attachForwarder(self: this): void;
+    doAutoForward(self: this): void;
+}
+
 export interface ProxyEventDetail{
     customAttr: string,
     prop: string,
