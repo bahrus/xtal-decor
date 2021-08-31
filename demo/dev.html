@@ -9,54 +9,68 @@
 </head>
 
 <body>
-    <div>
-        <xtal-decor upgrade=button if-wants-to-be=a-butterbeer-counter><script nomodule=ish>
-            const decoProps = {
-                actions: [
-                    ({count, self}) => {
-                        window.alert(count + " butterbeers sold");
-                    }
-                ],
-                on: {
-                    'click': ({self}) => {
-                        console.log(self);
-                        self.count++;
-                    }
-                },
-                init: ({self}) =>{
-                    self.count = 0;
+    <xtal-decor upgrade=button if-wants-to-be=a-butterbeer-counter virtual-props='["count"]'><script nomodule=ish>
+        const decoProps = {
+            actions: [
+                ({count, self}) => {
+                    //window.alert(count + " butterbeers sold");
+                    console.log(count + " butterbeers sold");
                 }
-            }
-            Object.assign(selfish.parentElement, decoProps);
-        </script></xtal-decor>
-
-        <button id=butterBeerCounter be-a-butterbeer-counter='{"count": 1000}' disabled>Click me to Order Your Drink</button>
-        <on-to-me on="count-changed" to=[-text-content] val=target.count></on-to-me>
-        <span -text-content></span> drinks sold.
-
-        <button onclick="setCount()">Set count to 2000</button>
-        <script>
-            function setCount(){
-                butterBeerCounter.setAttribute('be-a-butterbeer-counter', '{"count": 2000}');
-            }
-        </script>
-        <script type=importmap>
-        {
-            "imports": {
-                "xtal-element/": "../node_modules/xtal-element/",
-                "trans-render/": "../node_modules/trans-render/",
-                "on-to-me/": "../node_modules/on-to-me/",
-                "nomodule/": "../node_modules/nomodule/",
-                "css-observe/": "../node_modules/css-observe/"
+            ],
+            on: {
+                'click': ({self}) => {
+                    console.log(self);
+                    self.count++;
+                }
+            },
+            init: ({self}) =>{
+                self.count = 0;
             }
         }
-        </script>
-        <script type=module>
-            import '../xtal-decor.js';
-            import 'on-to-me/on-to-me.js';
-            import 'nomodule/no-module.js';
-        </script>
-    </div>
+        Object.assign(selfish.parentElement, decoProps);
+    </script></xtal-decor>
+
+
+    <button id=butterbeerCounter be-a-butterbeer-counter='{"count": 1000}'>Click Me to Order Your Drink</button>
+    
+    <proxy-decor id=proxyDecor for=butterbeerCounter></proxy-decor>
+    <pass-down 
+        on="a-butterbeer-counter:count-changed" 
+        to=[-text-content] m=1 
+        val-from-target=aButterbeerCounter.count  init-event="a-butterbeer-counter:initialized">
+    </pass-down>
+
+    <span -text-content></span> drinks sold.
+
+
+    <button onclick="setCount()">Set count to 2000</button>
+    <script>
+        function setCount(){
+            proxyDecor.aButterbeerCounter.count = 2000;
+        }
+    </script>
+    <script type=importmap>
+    {
+        "imports": {
+            "xtal-element/": "../node_modules/xtal-element/",
+            "xtal-decor/": "../",
+            "trans-render/": "../node_modules/trans-render/",
+            "on-to-me/": "../node_modules/on-to-me/",
+            "pass-down/": "../node_modules/pass-down/",
+            "mut-obs/": "../node-modules/mut-obs/",
+            "nomodule/": "../node_modules/nomodule/",
+            "css-observe/": "../node_modules/css-observe/",
+            "proxy-decor/": "../node_modules/proxy-decor/",
+            "mut-obs/": "../node_modules/mut-obs/"
+        }
+    }
+    </script>
+    <script type=module>
+        import '../xtal-decor.js';
+        import 'pass-down/p-d.js';
+        import 'proxy-decor/proxy-decor.js';
+        import 'nomodule/no-module.js';
+    </script>
 </body>
 
 </html>

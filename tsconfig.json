@@ -9,7 +9,7 @@
 		"strict": true,
 	},
 	"files":[
-		"xtal-decor2.ts",
+		"xtal-decor.ts",
 		"upgrade.ts"
 	],
 	"exclude":[
