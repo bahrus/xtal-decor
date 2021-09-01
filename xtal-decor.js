@@ -1,7 +1,7 @@
 import { CE } from 'trans-render/lib/CE.js';
 import { upgrade as upgr, getAttrInfo } from './upgrade.js';
 import { getDestructArgs } from 'xtal-element/lib/getDestructArgs.js';
-const ce = new CE();
+export const ce = new CE();
 export class XtalDecorCore extends HTMLElement {
     targetToProxyMap = new WeakMap();
     watchForElementsToUpgrade({ upgrade, ifWantsToBe, init, actions }) {
@@ -186,5 +186,5 @@ ce.def({
  * @element xtal-decor
  * @tag xtal-decor
  */
-export const XtalDecore = ce.classDef;
+export const XtalDecor = ce.classDef;
 export const eventName = 'yzDz0XScOUWhk/CI+tT4vg';

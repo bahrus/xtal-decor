@@ -4,7 +4,7 @@ import {XtalDecorProps, XtalDecorActions, ProxyEventDetail} from './types';
 import { getDestructArgs } from 'xtal-element/lib/getDestructArgs.js';
 import { EventSettings } from 'xtal-element/types.d.js';
 
-const ce = new CE<XtalDecorProps, XtalDecorActions>();
+export const ce = new CE<XtalDecorProps, XtalDecorActions>();
 
 export class XtalDecorCore extends HTMLElement implements XtalDecorActions{
     targetToProxyMap: WeakMap<any, any> = new WeakMap();
@@ -190,7 +190,7 @@ ce.def({
  * @element xtal-decor
  * @tag xtal-decor
  */
-export const XtalDecore = ce.classDef!;
+export const XtalDecor = ce.classDef!;
 
 export const eventName = 'yzDz0XScOUWhk/CI+tT4vg';
 
