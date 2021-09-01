@@ -101,6 +101,12 @@ export class XtalDecorCore extends HTMLElement {
         this.newTargetProxyPair = undefined;
     }
     attachForwarder({ newTargetId }) {
+        const qry = `proxy-decor[for="${newTargetId}"]`;
+        const newForwarder = this.getRootNode()?.querySelector(qry);
+        if (newForwarder) {
+            this.newForwarder = newForwarder;
+            return;
+        }
         import('css-observe/css-observe.js');
         const observer = document.createElement('css-observe');
         observer.observe = true;
