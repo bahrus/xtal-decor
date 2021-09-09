@@ -6,7 +6,7 @@ import { EventSettings } from 'xtal-element/types.d.js';
 
 export const ce = new CE<XtalDecorProps, XtalDecorActions>();
 
-export class XtalDecorCore extends HTMLElement implements XtalDecorActions{
+export class XtalDecorCore<TTargetElement extends Element = HTMLElement> extends HTMLElement implements XtalDecorActions{
     targetToProxyMap: WeakMap<any, any> = new WeakMap();
     watchForElementsToUpgrade({upgrade, ifWantsToBe, init, actions}: this){
         const callback = (target: HTMLElement) => {
@@ -88,16 +88,15 @@ export class XtalDecorCore extends HTMLElement implements XtalDecorActions{
         }
     }
     initializeProxy({newTargetProxyPair, init, on, capture, ifWantsToBe}: this){
-        if(newTargetProxyPair === undefined) return;
-        const newProxy = newTargetProxyPair.proxy;
+        const newProxy = newTargetProxyPair!.proxy;
         (<any>newProxy).self = newProxy;
-        const newTarget = newTargetProxyPair.target;
+        const newTarget = newTargetProxyPair!.target;
         if(init !== undefined) init(newProxy);
         const attr = getAttrInfo(newTarget, ifWantsToBe!, true);
         if(attr !== null && attr.length > 0 && attr[0]!.length > 0){
             Object.assign(newProxy, JSON.parse(attr[0]!));
         }
-        addEvents(on!, newTarget, newProxy, false);
+        addEvents(on!, newTarget as EventTarget, newProxy, false);
         addEvents(capture!, newTarget, newProxy, true);
         this.newTargetProxyPair  = undefined;
     }
@@ -134,9 +133,9 @@ export class XtalDecorCore extends HTMLElement implements XtalDecorActions{
 }
 
 
-export interface XtalDecorCore extends XtalDecorProps{}
+export interface XtalDecorCore<TTargetElement extends Element = HTMLElement> extends XtalDecorProps<TTargetElement>{}
 
-function addEvents(on: EventSettings | undefined, target: HTMLElement, proxy: HTMLElement, capture: boolean){
+function addEvents(on: EventSettings | undefined, target: EventTarget, proxy: EventTarget, capture: boolean){
     if(on === undefined) return;
     for(var key in on){
         const eventSetting = on[key];

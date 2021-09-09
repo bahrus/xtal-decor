@@ -33,13 +33,13 @@
   },
   "dependencies": {
     "css-observe": "0.0.54",
-    "trans-render": "0.0.369",
-    "xtal-element": "0.0.439"
+    "trans-render": "0.0.390",
+    "xtal-element": "0.0.441"
   },
   "devDependencies": {
     "@skypack/package-check": "0.2.2",
     "nomodule": "0.0.18",
-    "pass-down": "0.0.93",
+    "pass-down": "0.0.104",
     "proxy-decor": "0.0.9",
     "xtal-test": "0.0.51"
   },

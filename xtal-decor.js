@@ -85,8 +85,6 @@ export class XtalDecorCore extends HTMLElement {
         }
     }
     initializeProxy({ newTargetProxyPair, init, on, capture, ifWantsToBe }) {
-        if (newTargetProxyPair === undefined)
-            return;
         const newProxy = newTargetProxyPair.proxy;
         newProxy.self = newProxy;
         const newTarget = newTargetProxyPair.target;
