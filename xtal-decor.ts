@@ -8,7 +8,7 @@ export const ce = new CE<XtalDecorProps, XtalDecorActions>();
 
 export class XtalDecorCore<TTargetElement extends Element = HTMLElement> extends HTMLElement implements XtalDecorActions{
     targetToProxyMap: WeakMap<any, any> = new WeakMap();
-    watchForElementsToUpgrade({upgrade, ifWantsToBe, init, actions}: this){
+    watchForElementsToUpgrade({upgrade, ifWantsToBe, init, actions, forceVisible}: this){
         const callback = (target: Element) => {
             this.newTarget = target as TTargetElement;
         }
@@ -16,6 +16,7 @@ export class XtalDecorCore<TTargetElement extends Element = HTMLElement> extends
             shadowDomPeer: this,
             upgrade: upgrade!,
             ifWantsToBe: ifWantsToBe!,
+            forceVisible,
         }, callback);
     }
     pairTargetWithProxy({actions, virtualProps, targetToProxyMap, newTarget, ifWantsToBe, noParse}: this){
@@ -162,6 +163,7 @@ ce.def({
         propDefaults:{
             ifWantsToBe: '',
             noParse: false,
+            forceVisible: false,
         },
         style:{
             display: 'none'

@@ -4,7 +4,7 @@ import { getDestructArgs } from 'xtal-element/lib/getDestructArgs.js';
 export const ce = new CE();
 export class XtalDecorCore extends HTMLElement {
     targetToProxyMap = new WeakMap();
-    watchForElementsToUpgrade({ upgrade, ifWantsToBe, init, actions }) {
+    watchForElementsToUpgrade({ upgrade, ifWantsToBe, init, actions, forceVisible }) {
         const callback = (target) => {
             this.newTarget = target;
         };
@@ -12,6 +12,7 @@ export class XtalDecorCore extends HTMLElement {
             shadowDomPeer: this,
             upgrade: upgrade,
             ifWantsToBe: ifWantsToBe,
+            forceVisible,
         }, callback);
     }
     pairTargetWithProxy({ actions, virtualProps, targetToProxyMap, newTarget, ifWantsToBe, noParse }) {
@@ -159,6 +160,7 @@ ce.def({
         propDefaults: {
             ifWantsToBe: '',
             noParse: false,
+            forceVisible: false,
         },
         style: {
             display: 'none'

@@ -31,6 +31,8 @@ export interface XtalDecorProps<TTargetElement extends Element = HTMLElement>  {
     virtualProps: string[] | undefined;
 
     noParse: boolean;
+
+    forceVisible: boolean;
 }
 
 export interface XtalDecorActions<TTargetElement extends Element = HTMLElement>{
@@ -61,6 +63,8 @@ export interface UpgradeArg<T extends Object>{
      * Monitor for attributes that start with be-[ifWantsToBe]
      */
     ifWantsToBe: string,
+
+    forceVisible: boolean,
 }
 
 export interface TargetProxyPair<T extends EventTarget> {
