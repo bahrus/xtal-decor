@@ -1,6 +1,7 @@
-import {PropAction, EventSettings} from 'xtal-element/types.d.js';
+import { EventSettings} from 'xtal-element/types.d.js';
 import { ProxyDecorMethods } from 'proxy-decor/types.d.js';
 
+export type PropAction<T extends Element = HTMLElement> = (t: T, d: XtalDecorProps<T>) => any;
 export interface XtalDecorProps<TTargetElement extends Element = HTMLElement>  {
     upgrade: string | undefined;
 
@@ -28,6 +29,8 @@ export interface XtalDecorProps<TTargetElement extends Element = HTMLElement>  {
      * Set these properties via a WeakMap, rather than on the (native) element itself.
      */
     virtualProps: string[] | undefined;
+
+    noParse: boolean;
 }
 
 export interface XtalDecorActions<TTargetElement extends Element = HTMLElement>{

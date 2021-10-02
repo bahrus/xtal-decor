@@ -9,8 +9,8 @@ export const ce = new CE<XtalDecorProps, XtalDecorActions>();
 export class XtalDecorCore<TTargetElement extends Element = HTMLElement> extends HTMLElement implements XtalDecorActions{
     targetToProxyMap: WeakMap<any, any> = new WeakMap();
     watchForElementsToUpgrade({upgrade, ifWantsToBe, init, actions}: this){
-        const callback = (target: HTMLElement) => {
-            this.newTarget = target;
+        const callback = (target: Element) => {
+            this.newTarget = target as TTargetElement;
         }
         upgr({
             shadowDomPeer: this,
@@ -18,12 +18,14 @@ export class XtalDecorCore<TTargetElement extends Element = HTMLElement> extends
             ifWantsToBe: ifWantsToBe!,
         }, callback);
     }
-    pairTargetWithProxy({actions, virtualProps, targetToProxyMap, newTarget, ifWantsToBe}: this){
+    pairTargetWithProxy({actions, virtualProps, targetToProxyMap, newTarget, ifWantsToBe, noParse}: this){
         const existingProxy = targetToProxyMap.get(newTarget);
         if(existingProxy){
-            const attr = getAttrInfo(newTarget!, ifWantsToBe!, true);
-            if(attr !== null && attr.length > 0 && attr[0]!.length > 0){
-                Object.assign(existingProxy, JSON.parse(attr[0]!));
+            if(!noParse){
+                const attr = getAttrInfo(newTarget!, ifWantsToBe!, true);
+                if(attr !== null && attr.length > 0 && attr[0]!.length > 0){
+                    Object.assign(existingProxy, JSON.parse(attr[0]!));
+                }
             }
             return;
         }
@@ -43,7 +45,7 @@ export class XtalDecorCore<TTargetElement extends Element = HTMLElement> extends
                     if(dependencies.includes(key as string)){
                         //TODO:  symbols
                         const arg = Object.assign({}, virtualPropHolder, target, {target});
-                        action(arg as HTMLElement);
+                        action(arg as HTMLElement, this);
                     }
                 });
                 switch(typeof key){ //TODO:  remove this in favor of prop subscribers.
@@ -87,14 +89,16 @@ export class XtalDecorCore<TTargetElement extends Element = HTMLElement> extends
             self.newTargetId = id;
         }
     }
-    initializeProxy({newTargetProxyPair, init, on, capture, ifWantsToBe}: this){
+    initializeProxy({newTargetProxyPair, init, on, capture, ifWantsToBe, noParse}: this){
         const newProxy = newTargetProxyPair!.proxy;
         (<any>newProxy).self = newProxy;
         const newTarget = newTargetProxyPair!.target;
-        if(init !== undefined) init(newProxy);
-        const attr = getAttrInfo(newTarget, ifWantsToBe!, true);
-        if(attr !== null && attr.length > 0 && attr[0]!.length > 0){
-            Object.assign(newProxy, JSON.parse(attr[0]!));
+        if(init !== undefined) init(newProxy, this);
+        if(!noParse){
+            const attr = getAttrInfo(newTarget, ifWantsToBe!, true);
+            if(attr !== null && attr.length > 0 && attr[0]!.length > 0){
+                Object.assign(newProxy, JSON.parse(attr[0]!));
+            }
         }
         addEvents(on!, newTarget as EventTarget, newProxy, false);
         addEvents(capture!, newTarget, newProxy, true);
@@ -156,7 +160,8 @@ ce.def({
     config:{
         tagName:'xtal-decor',
         propDefaults:{
-            ifWantsToBe: ''
+            ifWantsToBe: '',
+            noParse: false,
         },
         style:{
             display: 'none'

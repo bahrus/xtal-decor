@@ -14,12 +14,14 @@ export class XtalDecorCore extends HTMLElement {
             ifWantsToBe: ifWantsToBe,
         }, callback);
     }
-    pairTargetWithProxy({ actions, virtualProps, targetToProxyMap, newTarget, ifWantsToBe }) {
+    pairTargetWithProxy({ actions, virtualProps, targetToProxyMap, newTarget, ifWantsToBe, noParse }) {
         const existingProxy = targetToProxyMap.get(newTarget);
         if (existingProxy) {
-            const attr = getAttrInfo(newTarget, ifWantsToBe, true);
-            if (attr !== null && attr.length > 0 && attr[0].length > 0) {
-                Object.assign(existingProxy, JSON.parse(attr[0]));
+            if (!noParse) {
+                const attr = getAttrInfo(newTarget, ifWantsToBe, true);
+                if (attr !== null && attr.length > 0 && attr[0].length > 0) {
+                    Object.assign(existingProxy, JSON.parse(attr[0]));
+                }
             }
             return;
         }
@@ -40,7 +42,7 @@ export class XtalDecorCore extends HTMLElement {
                     if (dependencies.includes(key)) {
                         //TODO:  symbols
                         const arg = Object.assign({}, virtualPropHolder, target, { target });
-                        action(arg);
+                        action(arg, this);
                     }
                 });
                 switch (typeof key) { //TODO:  remove this in favor of prop subscribers.
@@ -84,15 +86,17 @@ export class XtalDecorCore extends HTMLElement {
             self.newTargetId = id;
         }
     }
-    initializeProxy({ newTargetProxyPair, init, on, capture, ifWantsToBe }) {
+    initializeProxy({ newTargetProxyPair, init, on, capture, ifWantsToBe, noParse }) {
         const newProxy = newTargetProxyPair.proxy;
         newProxy.self = newProxy;
         const newTarget = newTargetProxyPair.target;
         if (init !== undefined)
-            init(newProxy);
-        const attr = getAttrInfo(newTarget, ifWantsToBe, true);
-        if (attr !== null && attr.length > 0 && attr[0].length > 0) {
-            Object.assign(newProxy, JSON.parse(attr[0]));
+            init(newProxy, this);
+        if (!noParse) {
+            const attr = getAttrInfo(newTarget, ifWantsToBe, true);
+            if (attr !== null && attr.length > 0 && attr[0].length > 0) {
+                Object.assign(newProxy, JSON.parse(attr[0]));
+            }
         }
         addEvents(on, newTarget, newProxy, false);
         addEvents(capture, newTarget, newProxy, true);
@@ -153,7 +157,8 @@ ce.def({
     config: {
         tagName: 'xtal-decor',
         propDefaults: {
-            ifWantsToBe: ''
+            ifWantsToBe: '',
+            noParse: false,
         },
         style: {
             display: 'none'
