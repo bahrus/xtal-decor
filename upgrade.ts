@@ -1,14 +1,15 @@
 import { addCSSListener } from 'xtal-element/lib/observeCssSelector.js';
 import { UpgradeArg } from './types.d.js';
 
-export function upgrade<T extends EventTarget>(args: UpgradeArg<T>, callback?: (t: T) => void){
+export function upgrade<T extends EventTarget>(args: UpgradeArg<T>, callback?: (t: T) => void, forceVisible = false){
     const beAttrib = `be-${args.ifWantsToBe}`;
     const id = 'a' + (new Date()).valueOf().toString();
-    monitor(id, beAttrib, args, callback);
+    monitor(id, beAttrib, args, callback, forceVisible);
 }
 
-function monitor<T extends EventTarget>(id: string, beAttrib: string, args: UpgradeArg<T>, callback?: (t: T) => void){
-    addCSSListener(id, args.shadowDomPeer, `${args.upgrade}[${beAttrib}],${args.upgrade}[data-${beAttrib}]`, (e: AnimationEvent) => {
+function monitor<T extends EventTarget>(id: string, beAttrib: string, args: UpgradeArg<T>, callback?: (t: T) => void, forceVisible?: boolean){
+    const attribSelector = `${args.upgrade}[${beAttrib}],${args.upgrade}[data-${beAttrib}]`;
+    addCSSListener(id, args.shadowDomPeer, attribSelector, (e: AnimationEvent) => {
         if(e.animationName !== id) return;
         const target = e.target;
         const val = getAttrInfo(target as Element, args.ifWantsToBe, false);
@@ -19,7 +20,11 @@ function monitor<T extends EventTarget>(id: string, beAttrib: string, args: Upgr
         (target as Element).setAttribute(`${val[1]}is-${args.ifWantsToBe}`, val[0] as string);
         (target as Element).removeAttribute(`${val[1]}be-${args.ifWantsToBe}`);
         if(callback !== undefined) callback(target as T);
-    });
+    }, forceVisible ? `
+        ${attribSelector}{
+            display:inline !important
+        }
+    `: undefined);
 }
 
 export function getAttrInfo(newTarget: Element, ifWantsToBe: string, is: boolean){

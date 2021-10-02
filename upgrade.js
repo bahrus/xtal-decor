@@ -1,11 +1,12 @@
 import { addCSSListener } from 'xtal-element/lib/observeCssSelector.js';
-export function upgrade(args, callback) {
+export function upgrade(args, callback, forceVisible = false) {
     const beAttrib = `be-${args.ifWantsToBe}`;
     const id = 'a' + (new Date()).valueOf().toString();
-    monitor(id, beAttrib, args, callback);
+    monitor(id, beAttrib, args, callback, forceVisible);
 }
-function monitor(id, beAttrib, args, callback) {
-    addCSSListener(id, args.shadowDomPeer, `${args.upgrade}[${beAttrib}],${args.upgrade}[data-${beAttrib}]`, (e) => {
+function monitor(id, beAttrib, args, callback, forceVisible) {
+    const attribSelector = `${args.upgrade}[${beAttrib}],${args.upgrade}[data-${beAttrib}]`;
+    addCSSListener(id, args.shadowDomPeer, attribSelector, (e) => {
         if (e.animationName !== id)
             return;
         const target = e.target;
@@ -18,7 +19,11 @@ function monitor(id, beAttrib, args, callback) {
         target.removeAttribute(`${val[1]}be-${args.ifWantsToBe}`);
         if (callback !== undefined)
             callback(target);
-    });
+    }, forceVisible ? `
+        ${attribSelector}{
+            display:inline !important
+        }
+    ` : undefined);
 }
 export function getAttrInfo(newTarget, ifWantsToBe, is) {
     const bePrefix = is ? 'is-' : 'be-';
