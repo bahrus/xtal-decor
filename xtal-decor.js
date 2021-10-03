@@ -92,7 +92,7 @@ export class XtalDecorCore extends HTMLElement {
         newProxy.self = newProxy;
         const newTarget = newTargetProxyPair.target;
         if (init !== undefined)
-            init(newProxy, this);
+            init(newProxy, this, newTarget);
         if (!noParse) {
             const attr = getAttrInfo(newTarget, ifWantsToBe, true);
             if (attr !== null && attr.length > 0 && attr[0].length > 0) {
