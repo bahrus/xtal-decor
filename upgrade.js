@@ -12,7 +12,8 @@ function monitor(id, beAttrib, args, callback) {
         const target = e.target;
         const val = getAttrInfo(target, args.ifWantsToBe, false);
         if (val === null) {
-            console.warn("Mismatch found.");
+            //console.warn("Mismatch found.");
+            //TODO:  investigate this scenario more.
             return;
         }
         target.setAttribute(`${val[1]}is-${args.ifWantsToBe}`, val[0]);

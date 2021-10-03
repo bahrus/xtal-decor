@@ -14,7 +14,8 @@ function monitor<T extends EventTarget>(id: string, beAttrib: string, args: Upgr
         const target = e.target;
         const val = getAttrInfo(target as Element, args.ifWantsToBe, false);
         if(val === null) {
-            console.warn("Mismatch found.");
+            //console.warn("Mismatch found.");
+            //TODO:  investigate this scenario more.
             return;
         }
         (target as Element).setAttribute(`${val[1]}is-${args.ifWantsToBe}`, val[0] as string);
