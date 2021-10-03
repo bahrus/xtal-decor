@@ -1,6 +1,6 @@
 import { CE } from 'trans-render/lib/CE.js';
 import { upgrade as upgr, getAttrInfo } from './upgrade.js';
-import { getDestructArgs } from 'xtal-element/lib/getDestructArgs.js';
+import { getDestructArgs } from 'trans-render/lib/getDestructArgs.js';
 export const ce = new CE();
 export class XtalDecorCore extends HTMLElement {
     targetToProxyMap = new WeakMap();

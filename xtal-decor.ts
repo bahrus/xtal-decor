@@ -1,8 +1,8 @@
 import {CE} from 'trans-render/lib/CE.js';
 import { upgrade as upgr, getAttrInfo} from './upgrade.js';
 import {XtalDecorProps, XtalDecorActions, ProxyEventDetail} from './types';
-import { getDestructArgs } from 'xtal-element/lib/getDestructArgs.js';
-import { EventSettings } from 'xtal-element/types.d.js';
+import { getDestructArgs } from 'trans-render/lib/getDestructArgs.js';
+import { EventSettings } from 'trans-render/lib/types.d.js';
 
 export const ce = new CE<XtalDecorProps, XtalDecorActions>();
 
