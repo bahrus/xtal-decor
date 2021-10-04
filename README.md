@@ -48,6 +48,8 @@ xtal-decor provides the base class and web component.  Like xtal-deco, we can av
 </script>
 ```
 
+[TODO:  support for dispose]
+
 A more "formal" way of defining new behavior is to extend the base class XtalDecor, and to set the "virtualProps", "actions", "on" and/or "init" properties during field initialization or in the constructor.  You can then define a custom element with any name you want using your extended class.  
 
 An instance of your custom element needs to be added somewhere in the shadowDOM realm where you want it to affect behavior (or outside any Shadow DOM Realm to affect elements outside any Shadow DOM).
