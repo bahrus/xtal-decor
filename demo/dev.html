@@ -25,6 +25,9 @@
             },
             init: ({self}) =>{
                 self.count = 0;
+            },
+            finale: ({self}, target) =>{
+                console.log(self, target);
             }
         }
         Object.assign(selfish.parentElement, decoProps);
@@ -47,6 +50,12 @@
     <script>
         function setCount(){
             proxyDecor.aButterbeerCounter.count = 2000;
+        }
+    </script>
+    <button onclick="removeButton()">Remove button</button>
+    <script>
+        function removeButton(){
+            butterbeerCounter.remove();
         }
     </script>
     <script type=importmap>

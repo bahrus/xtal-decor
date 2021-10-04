@@ -9,6 +9,8 @@ export interface XtalDecorProps<TTargetElement extends Element = HTMLElement>  {
 
     init: PropAction<TTargetElement> | undefined;
 
+    finale: (proxy: Element, target: Element) => void;
+
     actions: PropAction<any>[] | undefined;
 
     on: EventSettings | undefined;

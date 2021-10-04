@@ -1,6 +1,7 @@
 import { CE } from 'trans-render/lib/CE.js';
 import { upgrade as upgr, getAttrInfo } from './upgrade.js';
 import { getDestructArgs } from 'trans-render/lib/getDestructArgs.js';
+import { onRemove } from 'trans-render/lib/onRemove.js';
 export const ce = new CE();
 export class XtalDecorCore extends HTMLElement {
     targetToProxyMap = new WeakMap();
@@ -15,7 +16,7 @@ export class XtalDecorCore extends HTMLElement {
             forceVisible,
         }, callback);
     }
-    pairTargetWithProxy({ actions, virtualProps, targetToProxyMap, newTarget, ifWantsToBe, noParse }) {
+    pairTargetWithProxy({ actions, virtualProps, targetToProxyMap, newTarget, ifWantsToBe, noParse, finale }) {
         const existingProxy = targetToProxyMap.get(newTarget);
         if (existingProxy) {
             if (!noParse) {
@@ -82,6 +83,9 @@ export class XtalDecorCore extends HTMLElement {
             target: newTarget
         };
         const id = newTarget.id;
+        onRemove(newTarget, (removedEl) => {
+            finale(proxy, removedEl);
+        });
         self.newTarget = undefined;
         if (id !== '') {
             self.newTargetId = id;
@@ -170,7 +174,7 @@ ce.def({
                 ifAllOf: ['upgrade', 'ifWantsToBe', 'init', 'actions']
             },
             pairTargetWithProxy: {
-                ifKeyIn: ['actions', 'virtualProps', 'ifWantsToBe'],
+                ifKeyIn: ['actions', 'virtualProps', 'ifWantsToBe', 'finale'],
                 ifAllOf: ['newTarget']
             },
             initializeProxy: {
