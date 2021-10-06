@@ -34,7 +34,7 @@
   "dependencies": {
     "css-observe": "0.0.56",
     "trans-render": "0.0.418",
-    "xtal-element": "0.0.442"
+    "xtal-element": "0.0.443"
   },
   "devDependencies": {
     "@skypack/package-check": "0.2.2",
