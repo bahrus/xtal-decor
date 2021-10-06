@@ -32,8 +32,8 @@
     "url": "git+https://github.com/bahrus/xtal-decor.git"
   },
   "dependencies": {
-    "css-observe": "0.0.55",
-    "trans-render": "0.0.417",
+    "css-observe": "0.0.56",
+    "trans-render": "0.0.418",
     "xtal-element": "0.0.442"
   },
   "devDependencies": {
