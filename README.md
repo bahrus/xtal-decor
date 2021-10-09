@@ -310,6 +310,10 @@ Support [be-observant](https://github.com/bahrus/be-observant) syntax:
 
 ```
 
+How to avoid being tightly coupled to one binding syntax?  Somehow want to be able to merge two decorators / behaviors together.
+
+So maybe some sort of bridge between list-sorter and be-observant is required?
+
 
 
 ## Viewing example from git clone or github fork:
