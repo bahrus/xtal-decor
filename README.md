@@ -286,6 +286,31 @@ If you are concerned about using attributes that are prefixed with the non stand
 
 ```
 
+## Inserting dynamic settings [TODO]
+
+Support [be-observant](https://github.com/bahrus/be-observant) syntax:
+
+```html
+<list-sorter  upgrade=* if-wants-to-be=sorted with-binding></list-sorter>
+
+...
+
+<toggle-button></toggle-button>
+
+<ul be-sorted='{"nodeSelectorToSortOn":"span"}' be-sorted-with-binding='{
+    "direction": {"observe": "toggle-button", "vft": "on", "valIfTrue": "asc", "valIfFalse": "desc"}
+}'>
+    <li>
+        <span>Zorse</span>
+    </li>
+    <li>
+        <span>Aardvark</span>
+    </li>
+</ul>
+
+```
+
+
 
 ## Viewing example from git clone or github fork:
 
