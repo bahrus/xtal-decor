@@ -165,6 +165,7 @@ ce.def({
             ifWantsToBe: '',
             noParse: false,
             forceVisible: false,
+            upgrade: '',
         },
         style: {
             display: 'none'

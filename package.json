@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "css-observe": "0.0.56",
-    "trans-render": "0.0.418",
+    "trans-render": "0.0.419",
     "xtal-element": "0.0.443"
   },
   "devDependencies": {

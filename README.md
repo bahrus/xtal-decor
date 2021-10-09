@@ -12,7 +12,7 @@ xtal-decor provides a base class which enables attaching ES6 proxies onto other 
 
 xtal-decor provides a much more "conservative" alternative approach to enhancing existing DOM elements, in place of the controversial "is"-based customized built-in element [standard-ish](https://bkardell.com/blog/TheWalrus.html).
 
-Like [xtal-deco](https://github.com/bahrus/xtal-deco), properties "init", "on" and "actions" allow us to define the behavior of the ES6 proxy with a minimum of fuss.  And the property "virtualProps" is also supported, which allows us to define properties that aren't already part of the native DOM element or custom element we are enhancing.  
+Like [xtal-deco](https://github.com/bahrus/xtal-deco), properties "init", "on", "actions" and "finale" allow us to define the behavior of the ES6 proxy with a minimum of fuss.  And the property "virtualProps" is also supported, which allows us to define properties that aren't already part of the native DOM element or custom element we are enhancing.  
 
 Use of virtualProps is critical if you want to be guaranteed that your component doesn't break, should the native DOM element or custom element be enhanced with a new property with the same name.
 
@@ -166,6 +166,10 @@ You cannot pass in new values by using the is-sorted attribute.  Instead, you ne
 </script>
 
 ```
+
+A [vscode plug-in](https://marketplace.visualstudio.com/items?itemName=andersonbruceb.json-in-html) is available that makes editing JSON attributes like these much less susceptible to human fallibility.
+
+
 
 ## Approach III.  Proxy Forwarding with a Light Touch
 
