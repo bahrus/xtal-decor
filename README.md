@@ -292,6 +292,7 @@ Support [be-observant](https://github.com/bahrus/be-observant) syntax:
 
 ```html
 <list-sorter  upgrade=* if-wants-to-be=sorted with-binding></list-sorter>
+<be-observant upgrade=* if-wants-to-be=sorted-with-binding proxy-to=list-sorter></be-observant>
 
 ...
 
