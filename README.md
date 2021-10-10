@@ -169,8 +169,6 @@ You cannot pass in new values by using the is-sorted attribute.  Instead, you ne
 
 A [vscode plug-in](https://marketplace.visualstudio.com/items?itemName=andersonbruceb.json-in-html) is available that makes editing JSON attributes like these much less susceptible to human fallibility.
 
-
-
 ## Approach III.  Proxy Forwarding with a Light Touch
 
 A reusable component, [https://github.com/bahrus/proxy-decor](proxy-decor) serves as a useful companion to xtal-decor. Whereas xtal-decor can have specialized logic (either via prop setting or class extension), proxy-decor is very light-weight and generic.  Think of it as a very [thin client](https://www.dell.com/premier/us/en/RC1378895?gacd=9684689-1077-5763017-265940558-0&dgc=st&gclid=9f0071f121cb1a930be2117f5bd9e116&gclsrc=3p.ds&msclkid=9f0071f121cb1a930be2117f5bd9e116#/systems/cloud-client-computing) that easily connects to / switch between different remote, fully loaded desktop/server/VMs, sitting in some well-ventilated server room.
@@ -233,6 +231,13 @@ proxy-decor:
 
 
 
+
+
+
+## Approach IV.  Integrate with other decorators -- binding decorators -- that hide the complexity
+
+[WIP](https://github.com/bahrus/be-observant#inserting-dynamic-settings-todo)
+
 ## [Demo](https://codepen.io/bahrus/pen/XWpvmZr)
 
 
@@ -285,35 +290,6 @@ If you are concerned about using attributes that are prefixed with the non stand
 </ul>
 
 ```
-
-## Inserting dynamic settings [TODO]
-
-Support [be-observant](https://github.com/bahrus/be-observant) syntax:
-
-```html
-<list-sorter  upgrade=* if-wants-to-be=sorted with-binding></list-sorter>
-<be-observant upgrade=* if-wants-to-be=sorted-with-binding proxy-to=list-sorter></be-observant>
-
-...
-
-<toggle-button></toggle-button>
-
-<ul be-sorted='{"nodeSelectorToSortOn":"span"}' be-sorted-with-binding='{
-    "direction": {"observe": "toggle-button", "vft": "on", "valIfTrue": "asc", "valIfFalse": "desc"}
-}'>
-    <li>
-        <span>Zorse</span>
-    </li>
-    <li>
-        <span>Aardvark</span>
-    </li>
-</ul>
-
-```
-
-How to avoid being tightly coupled to one binding syntax?  Somehow want to be able to merge two decorators / behaviors together.
-
-So maybe some sort of bridge between list-sorter and be-observant is required?
 
 
 
