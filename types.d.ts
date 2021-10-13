@@ -1,4 +1,4 @@
-import { EventSettings} from 'xtal-element/types.d.js';
+//import { EventSettings} from 'xtal-element/types.d.js';
 import { ProxyDecorMethods } from 'proxy-decor/types.d.js';
 
 export type PropAction<T extends Element = HTMLElement> = (t: T, d: XtalDecorProps<T>, t2?: T) => any;
@@ -7,15 +7,15 @@ export interface XtalDecorProps<TTargetElement extends Element = HTMLElement>  {
 
     ifWantsToBe: string | undefined;
 
-    init: PropAction<TTargetElement> | undefined;
+    init: (proxy: Element, decor: XtalDecorProps<TTargetElement>, target: Element) => void;
 
     finale: (proxy: Element, target: Element) => void;
 
     actions: PropAction<any>[] | undefined;
 
-    on: EventSettings | undefined;
+    on: any | undefined;
 
-    capture: EventSettings | undefined;
+    capture: any | undefined;
 
     newTarget: TTargetElement | undefined;
 
