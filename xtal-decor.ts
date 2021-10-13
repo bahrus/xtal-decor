@@ -47,7 +47,7 @@ export class XtalDecorCore<TTargetElement extends Element = HTMLElement> extends
                     if(dependencies.includes(key as string)){
                         //TODO:  symbols
                         const arg = Object.assign({}, virtualPropHolder, target, {target});
-                        action(arg as HTMLElement, this, target);
+                        action(arg as HTMLElement, this);
                     }
                 });
                 switch(typeof key){ //TODO:  remove this in favor of prop subscribers.
